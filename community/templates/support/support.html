@@ -1,0 +1,100 @@
+{% extends "support/base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block meta %}
+<meta name="abstract" content="{{ WEBSITE_NAME }} - {{ WEBSITE_SLOGAN }}"/>
+{% endblock %}
+{% block page_title %} <title>{{ application }} - {{ post.title }}</title> {% endblock %}
+{% block custom_head %}
+    <meta property="og:title" content="{{ post.title }} {% trans "sur" %} "/>
+    <meta property="og:description" content="{{ post.entry }}"/>
+{#    <meta property="og:image" content="{{ post.media.url }}"/>#}
+    <style>
+        h1, h2, h3, h4, h5 {font-weight: 400;color: #212121;}
+        h1 {font-size: 34px; line-height: 40px;margin: 0 0 26px;}
+        h2 {font-size: 26px; line-height: 28px;margin: 0 0 10px;}
+        p, ul {  margin: 4px 0 12px;}
+        #content .wrapper {width: 1200px}
+        .intro {font-size: 15px;font-weight: 300;line-height: 30px;text-align: justify;}
+
+        div.socials {float: right; margin-top: 20px}
+        div.socials li {border-bottom: solid 1px #CCC; display: block; list-style-type: none; clear: both; float: left; width: 100%}
+        div.socials li:last-child {border-bottom: solid 1px transparent}
+        div.socials li a{color: #555; float: left; padding: 12px 0; width: 100%}
+        div.socials li a span {float: left; margin: 5px 12px }
+        div.socials div {background-image: url('{% static "support/img/socialicons.png" %}'); background-size: 125px auto; float: left; height: 28px; margin-left: 5px;overflow: hidden; width: 28px}
+
+        .actions {color: #AAA; clear: both;font-size: 12px;float: right;margin-top: 30px;}
+        #post-cntr {background-color: #fff; float: left; padding: 20px 40px; width: 800px}
+        #right-panel {background-color: #db4437;color: #fff; float: right; height: 230px; max-width: 385px; min-width: 305px}
+        #right-panel li {list-style-type: none; border-left: solid 2px transparent; padding: 6px 0 9px 0;}
+        #right-panel ul {margin-top: 10px;}
+        #right-panel li:hover {background-color: #c53929}
+        #right-panel li.current {border-left: solid 2px #fff; font-weight: 700}
+        #right-panel li a {color: #EFEFEF; font-size: 12px; padding-left: 10px; text-decoration : none; width: 300px}
+    </style>
+{% endblock %}
+{% block banner %}
+    <div class="banner">
+
+        <div style="float: right; margin: 120px">
+            <a href="#" style="float: left; color: #fff; text-decoration: none">
+                <span>Ikwen</span>
+                <span class="icon" style="background-image: url('{% static "support/img/white-login.png" %}');background-size: 23px auto;margin-left: 12px"></span>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+{% block content %}
+    {% include 'snippets/fb_sdk.html' %}
+    <div style="float: left;color: #fff;font-size: 20px;font-weight: 300;margin-top: -40px;">Aide Ikwen</div>
+    <div id="post-cntr" class="subtle-shade">
+        <div class="post">
+            <h1>Télécharger et installer Google Chrome</h1>
+            <div class="intro">
+                <div class="text">
+                    <h2>The Ubuntu operating system's most recent Long</h2>
+                    <p>The Ubuntu operating system's most recent Long Term Support version, version 16.04 (Xenial Xerus), was released on April 21, 2016.
+
+This guide is intended as a brief overview of new features and significant changes to the system as a whole, since 14.04 LTS, from the perspective of server system administration. It draws on the official Xenial Xerus release notes, along with a variety of other sources.While new Ubuntu Desktop and Server releases appear every six months, LTS versions are released every two years, and are guaranteed support from Canonical for five years after release. This means that they constitute a stable platform for deploying production systems, and receive security updates and critical bugfixes for a substantial window of time. 16.04 will continue to be updated until April of 2021.
+
+You can read a detailed breakdown of the Ubuntu LTS release cycle on the Ubuntu Wiki.</p>
+                </div>
+            </div>
+            <div class="actions">
+                <div class="post-date">
+                    <span class="icon"></span>
+                    <span>{{ post.pub_date }}</span>
+                </div>
+            </div>
+        </div>
+        <div class="socials" style="float: right">
+            <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=http://{{post.get_uri}}/">
+                <div class="social fcbk" style="background-position: 0 0"></div>
+            </a>
+            <a  target="_blank" href="https://twitter.com/share?url=http://{{post.get_uri}}/" >
+                <div class="social tweet" style="background-position: -31px 0"></div>
+            </a>
+            <a target="_blank" href="https://plus.google.com/share?url=http://{{post.get_uri}}/">
+                <div class="social google" style="background-position: -64px 0;"></div>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+{% block right_panel %}
+    <div id="right-panel">
+        <div class="title">Inscription</div>
+        <ul>
+            <li><a href="#">Créer un compte sur YouTube</a></li>
+            <li class="current"><a href="#">Utiliser votre compte Google sur YouTube</a></li>
+            <li><a href="#">Créer une chaîne</a></li>
+            <li><a href="#">Validation de votre compte par téléphone</a></li>
+        </ul>
+    </div>
+{% endblock %}
+{% block custom_js %}
+    <script type="text/javascript">
+        (function() {
+        })()
+    </script>
+{% endblock %}

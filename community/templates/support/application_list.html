@@ -1,0 +1,130 @@
+{% extends "support/base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block meta %}
+<meta name="abstract" content="{{ WEBSITE_NAME }} - {{ WEBSITE_SLOGAN }}"/>
+{% endblock %}
+{% block page_title %} <title>{{ WEBSITE_NAME }} - {% trans "Home" %}</title> {% endblock %}
+{% block custom_head %}
+    <meta property="og:image" content="{{ fb_share_item.media.url }}"/>
+    <style>
+/* Float Shadow */
+        .hvr-float-shadow {display: inline-block;vertical-align: middle;-webkit-transform: translateZ(0);transform: translateZ(0);box-shadow: 0 0 1px rgba(0, 0, 0, 0);-webkit-backface-visibility: hidden;backface-visibility: hidden;-moz-osx-font-smoothing: grayscale;position: relative;-webkit-transition-duration: 0.3s; transition-duration: 0.3s;-webkit-transition-property: transform;transition-property: transform}
+        .hvr-float-shadow:before {pointer-events: none;position: absolute;z-index: -1;content: '';top: 100%;left: 5%; height: 10px; width: 90%;opacity: 0;background: -webkit-radial-gradient(center, ellipse, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 80%);background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 80%); -webkit-transition-duration: 0.3s; transition-duration: 0.3s; -webkit-transition-property: transform, opacity; transition-property: transform, opacity;}
+        .hvr-float-shadow:hover, .hvr-float-shadow:focus, .hvr-float-shadow:active {-webkit-transform: translateY(-5px);transform: translateY(-5px);}
+        .hvr-float-shadow:hover:before, .hvr-float-shadow:focus:before, .hvr-float-shadow:active:before {opacity: 1;-webkit-transform: translateY(5px);transform: translateY(5px);}
+
+        .wrapper {width: 1024px}
+        .alert {border: 1px solid transparent; border-radius: 4px; margin-bottom: 20px; padding: 15px; width: 868px;}
+        .alert-danger {color: #b94a48; background-color: #f2dede; border-color: #ebccd1}
+        .page-ctnr {background-color: #fff; float: left; padding: 50px 100px; width: 800px}
+        ul#apps {float: left}
+        ul#apps li {background-color: #fff; box-sizing: border-box;float: left; margin: 1.5em .5em 0; width: 139px}
+        ul#apps li:hover {box-shadow: 0 4px 16px #e0e0e0;}
+        ul#apps li > a {float: left; text-align: center; text-decoration: none; padding: 15px; width: 109px}
+        ul#apps li img {vertical-align: middle; width: 80px}
+        li h3 { display: block;font-size: 14px; font-family: 'open sans',sans-serif; height: auto; line-height: 32px;margin: 1em 0 4px;min-height: 0;    white-space: normal;}
+        li span {text-align: center; font-size: 13px; width: 109px}
+
+    </style>
+{% endblock %}
+{% block banner %}
+    <div class="banner">
+        <h2 style="color: #fff; float: left; margin: 90px">
+            Ikwen help
+        </h2>
+        <div style="float: right; margin: 120px">
+            <a href="#" style="float: left; color: #fff; text-decoration: none">
+                <span>Ikwen</span>
+                <span class="icon" style="background-image: url('{% static "support/img/white-login.png" %}');background-size: 23px auto;margin-left: 12px"></span>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    {% include 'snippets/fb_sdk.html' %}
+    <div class="page-ctnr subtle-shade">
+        <ul id="apps">
+            <li class="hvr-float-shadow">
+                <a href="">
+                    <img src="{% static 'support/img/Logo-10.png' %}">
+                    <h3>Shavida</h3>
+                    <span>VOD</span>
+                </a>
+            </li>
+            <li class="hvr-float-shadow">
+                <a href="">
+                    <img src="{% static 'support/img/Logo-10.png' %}">
+                    <h3>Shavida</h3>
+                    <span>Content vendor</span>
+                </a>
+            </li>
+            <li class="hvr-float-shadow">
+                <a href="">
+                    <img src="{% static 'support/img/Logo-10.png' %}">
+                    <h3>Shavida</h3>
+                    <span>Hosting</span>
+                </a>
+            </li>
+            <li class="hvr-float-shadow">
+                <a href="">
+                    <img src="{% static 'support/img/Logo-10.png' %}">
+                    <h3>Foulassi</h3>
+                    <span>School</span>
+                </a>
+            </li>
+            <li class="hvr-float-shadow">
+                <a href="">
+                    <img src="{% static 'support/img/Logo-10.png' %}">
+                    <h3>Kakocase </h3>
+                    <span>Provider</span>
+                </a>
+            </li>
+            <li class="hvr-float-shadow">
+                <a href="">
+                    <img src="{% static 'support/img/Logo-10.png' %}">
+                    <h3>Kakocase</h3>
+                    <span>Pikam-sellam</span>
+                </a>
+            </li>
+            <li class="hvr-float-shadow">
+                <a href="">
+                    <img src="{% static 'support/img/Logo-10.png' %}">
+                    <h3>Kakacase</h3>
+                    <span>Logistique</span>
+                </a>
+            </li>
+            <li class="hvr-float-shadow">
+                <a href="">
+                    <img src="{% static 'support/img/Logo-10.png' %}">
+                    <h3>Kakocase</h3>
+                    <span>personal</span>
+                </a>
+            </li>
+            <li class="hvr-float-shadow">
+                <a href="">
+                    <img src="{% static 'support/img/Logo-10.png' %}">
+                    <h3>Ikwen</h3>
+                    <span>Authentication</span>
+                </a>
+            </li>
+            <li class="hvr-float-shadow">
+                <a href="">
+                    <img src="{% static 'support/img/Logo-10.png' %}">
+                    <h3>Billingo</h3>
+                    <span>billing</span>
+                </a>
+            </li>
+
+        </ul>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script type="text/javascript">
+        (function() {
+
+        })()
+    </script>
+{% endblock %}

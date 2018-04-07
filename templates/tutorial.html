@@ -1,0 +1,42 @@
+{% extends "tuto_base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block meta %}
+<meta name="abstract" content="{{ WEBSITE_NAME }} - {{ WEBSITE_SLOGAN }}"/>
+{% endblock %}
+{% block page_title %} <title>{{ application }} - Tutorials</title> {% endblock %}
+{% block custom_head %}
+{#    <meta property="og:title" content="{{ post.title }} {% trans "sur" %} "/>#}
+{#    <meta property="og:description" content="{{ post.entry }}"/>#}
+{#    <meta property="og:image" content="{{ post.media.url }}"/>#}
+    <style>
+        .profile {float: left; width: 100%}
+        .profile img.poster {border-radius: 50px;float: left;margin-top: 0; height: 45px; width: 45px}
+        .profile img.poster {border-radius: 50px;float: left;margin-top: 0; height: 45px; width: 45px}
+        .profile .create {clear: both; color: #999; float: right; font-size: 10px;}
+        .profile .name {margin: 15px 10px;}
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="intro">
+        <div class="profile">
+            <img class="poster" src="{{ tutorial.author.picture.url }}">
+            <span class="name">{{ tutorial.author.name }}</span>
+            <span class="create">
+                <span>Member since: </span>
+                <span>{{ tutorial.author.created }}</span>
+            </span>
+        </div>
+    </div>
+    <section style="margin-top: 40px">
+        {{ tutorial.content | safe }}
+    </section>
+{% endblock %}
+
+{% block custom_js %}
+    <script type="text/javascript">
+        (function() {
+
+        })()
+    </script>
+{% endblock %}

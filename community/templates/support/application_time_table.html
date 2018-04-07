@@ -1,0 +1,145 @@
+{% extends "support/base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block meta %}
+<meta name="abstract" content="{{ WEBSITE_NAME }} - {{ WEBSITE_SLOGAN }}"/>
+{% endblock %}
+{% block page_title %} <title>{{ WEBSITE_NAME }} - {% trans "Home" %}</title> {% endblock %}
+{% block custom_head %}
+    <meta property="og:image" content="{{ fb_share_item.media.url }}"/>
+    <style>
+        div {outline: none;}
+        .alert {border: 1px solid transparent; border-radius: 4px; margin-bottom: 20px; padding: 15px; width: 868px;}
+        .alert-danger {color: #b94a48; background-color: #f2dede; border-color: #ebccd1}
+        .page-ctnr {background-color: #fff;display: inline-block;position: relative; float: left;min-height: 460px;text-align: left;width: 800px}
+
+        nav.accordion-homepage  {float: left; margin-top: 0;width: 100%;}
+        nav.accordion-homepage h1 {color: #212121;display: block; font-size: 24px; font-weight: 400; line-height: 32px; margin: 0; padding: 16px 16px 16px 72px;}
+        nav.accordion-homepage .parent {background: #fff;border-top: 1px solid #ddd;padding: 0;position: relative;}
+        nav.accordion-homepage .parent.selected {background: #616161; border-top: 1px solid #ddd;padding: 0; padding-bottom: 10px;position: relative; width:100% }
+        nav.accordion-homepage h2 {color: #212121;font-weight: 500; font-size: 15px;line-height: 24px;margin: 0;padding: 12px 72px;}
+        nav.accordion-homepage .selected h2 {color: #fff; font-weight: bold; font-size: 15px;line-height: 24px;margin: 0; margin-bottom: 1px;padding: 12px 72px;}
+        nav.accordion-homepage .parent:not(.selected) h2 {cursor: pointer;}
+        nav.accordion-homepage .parent:not(.selected) h2:hover {background-color: #f5f5f5}
+        nav.accordion-homepage .parent h2:before {color: #4285f4;font-size: 24px; content: '+'; left: 20px;position: absolute;}
+        nav.accordion-homepage .parent.selected h2:before {color: #fff;font-size: 24px; content: '-'; left: 22px;position: absolute;}
+        nav.accordion-homepage .overflow {overflow: hidden;}
+        nav.accordion-homepage .children {margin-bottom: -9999px;transition: margin-bottom 0s .5s,margin-top .5s}
+        nav.accordion-homepage .parent.selected .children {margin-bottom: 0; transition: margin-top .5s}
+        nav.accordion-homepage a {display: block;font-size: 13px;line-height: 14px;margin: 0;padding: 9px 72px;text-decoration: none;}
+        nav.accordion-homepage .parent a {color: #fff}
+    </style>
+{% endblock %}
+{% block banner %}
+    <div class="banner">
+        <h2 style="color: #fff; float: left; margin: 90px">
+            Bienvenue dans le Centre d'aide Google Chrome
+        </h2>
+        <div style="float: right; margin: 120px">
+            <a href="#" style="float: left; color: #fff; text-decoration: none">
+                <span>Liste des support</span>
+                <span class="icon" style="background-image: url('{% static "support/img/white-login.png" %}');background-size: 23px auto;margin-left: 12px"></span>
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    {% include 'snippets/fb_sdk.html' %}
+    <div class="page-ctnr subtle-shade">
+        <nav class="accordion-homepage">
+            <h1>Bienvenue dans le Centre d'aide Google Chrome</h1>
+            <section class="parent">
+                <h2>Articles les plus lus</h2>
+                <div class="overflow">
+                    <div class="children">
+                        <div class="child">
+                            <a href="#">Download IKWEN</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="parent">
+                <h2>Articles les plus lus</h2>
+                <div class="overflow">
+                    <div class="children">
+                        <div class="child">
+                            <a href="#">Download IKWEN</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="parent">
+                <h2>Articles les plus lus</h2>
+                <div class="overflow">
+                    <div class="children">
+                        <div class="child">
+                            <a href="#">Download IKWEN</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="parent">
+                <h2>Articles les plus lus</h2>
+                <div class="overflow">
+                    <div class="children">
+                        <div class="child">
+                            <a href="#">Download IKWEN</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="parent">
+                <h2>Articles les plus lus</h2>
+                <div class="overflow">
+                    <div class="children">
+                        <div class="child">
+                            <a href="#">Download IKWEN</a>
+                        </div>
+                        <div class="child">
+                            <a href="#">Download IKWEN</a>
+                        </div>
+
+                        <div class="child">
+                            <a href="#">Download IKWEN</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section class="parent">
+                <h2>Premiers pas sur Ikwen</h2>
+                <div class="overflow">
+                    <div class="children">
+                        <div class="child">
+                            <a href="#">Download IKWEN</a>
+                        </div>
+
+                        <div class="child">
+                            <a href="#">Download IKWEN</a>
+                        </div>
+
+                        <div class="child">
+                            <a href="#">Download IKWEN</a>
+                        </div>
+
+                        <div class="child">
+                            <a href="#">Download IKWEN</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </nav>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script type="text/javascript">
+        (function() {
+            $('nav.accordion-homepage').find(".parent").first().addClass('selected')
+            $('nav.accordion-homepage .parent:not(.selected) h2').live('click', function() {
+                $('nav.accordion-homepage').find(".parent.selected").removeClass('selected')
+                $(this).parent('.parent').addClass('selected')
+            })
+        })()
+    </script>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends "support/base.html" %}
+{% load i18n humanize staticfiles auth_tokens webdesign %}
+
+{% block meta %}
+    {{ block.super }}
+    {% if current_sub_chapter.media.name %}
+        <meta property="og:image" content="{{ current_sub_chapter.media.url }}"/>
+    {% endif %}
+    <meta property="og:title" content="{{ current_sub_chapter.title }} {% trans "sur" %} ikwen "/>
+    <meta property="og:description" content="{{ current_sub_chapter.content }}"/>
+{% endblock %}
+
+{% block page_title %} <title>{{ current_sub_chapter.chapter.support.app.name }} - {{ current_sub_chapter.title }}</title> {% endblock %}
+
+{% block content %}
+    <div id="content" class="edge-panel-left-container">
+        <div class="edge-panel-left">
+
+            <div id="accordion" class="panel-group" style="margin-top: 30px">
+               {% for sub_chapter in sub_chapters %}
+                <div class="panel" style="background-color: transparent">
+                    <div class="panel-heading">
+                        <h4 class="panel-title" style="overflow: hidden">
+                            <a data-toggle="collapse" data-parent="#accordion" title="{{ sub_chapter.chapter}}" href="#{{ sub_chapter.chapter.slug}}" style=" float:left; width: 1000px">{{ sub_chapter.chapter}}</a>
+                        </h4>
+                    </div>
+                    <div id="{{ sub_chapter.chapter.slug }}" class="panel-collapse collapse">
+                        <div class="panel-body" style=" border-top: none; padding: 5px 10px 10px 15px">
+                            <ul class="nav nav-pills nav-stacked"  style="overflow: hidden">
+                            {% for c in sub_chapter %}
+                                <li class="{{ c.slug }}"><a href="{% url 'support_detail' c.chapter.support.app.slug c.slug %}">{{ c.title }}</a></li>
+                             {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div id="admin-content">
+            <div class="container-fluid">
+                {% if current_sub_chapter.media.name %}
+                    <div class="illustration-img img-responsive">
+                        <img src="{{ current_sub_chapter.media.url }}" class="img-responsive">
+                    </div>
+                {% endif %}
+                <h3>{{ current_sub_chapter.title }}</h3>
+                <div class="entry"> {{ current_sub_chapter.content | safe }}</div>
+                <div class="bottom">
+                    <div class="socials" style="float: right">
+                        <span style="float: left">Share:</span>
+                        <a target="_blank" href="https://www.facebook.com/sharer/sharer.php?u={{ current_sub_chapter.get_uri|iriencode }}/">
+                            <div class="social fcbk" style="background-image: url({% static "support/img/socialicons.png" %});background-position: 0 0"></div>
+                        </a>
+                        <a target="_blank" href="https://twitter.com/share?url={{ current_sub_chapter.get_uri|iriencode }}/">
+                            <div class="social tweet" style="background-image: url({% static "support/img/socialicons.png" %});background-position: -31px 0"></div>
+                        </a>
+                        <a target="_blank" href="https://plus.google.com/share?url={{ current_sub_chapter.get_uri|iriencode }}/">
+                            <div class="social google" style="background-image: url({% static "support/img/socialicons.png" %});background-position: -64px 0;"></div>
+                        </a>
+                    </div>
+                    <div class="author" style="clear: both">
+                        <div class="profile" style="padding: 20px 0">
+                            {% if current_sub_chapter.member.photo and current_sub_chapter.member.photo.name %}
+                                <img class="poster" src="{{ settings.IKWEN_MEDIA_URL }}{{ current_sub_chapter.member.photo.small_name }}">
+                            {% endif %}
+                            <span class="name"><a href="#" target="_blank">{{ current_sub_chapter.member.full_name }}</a></span>
+                            <span class="create">
+                                <span>Member since: </span>
+                                <span> {{ current_sub_chapter.member.display_date_joined }}</span>
+                            </span>
+                        </div>
+                    </div>
+
+{#                    <div class="help" style="clear: both">expert Ikwen, est l'auteur de cette page d'aide. Laissez un commentaire ci-dessous pour l'aider à améliorer son article.</div>#}
+                    <h4>{% trans 'Was this helpful for you ?' %}</h4>
+                    <div id="response">
+                        <button data-response="yes" class="btn btn-primary yes col-xs-12 col-lg-2 cta">{% trans 'Yes' %}</button>
+                        <button data-response="no" data-toggle="modal" data-target="#rating" class="btn btn-warning no col-xs-12 col-lg-2 cta">{% trans 'No' %}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="rating" tabindex="-1" role="dialog" aria-labelledby="ratingLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="ratingLabel">{% trans "Give your opinion to make us help you more" %}</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="firstname" class="col-sm-12 control-label" style="text-align: left">{% trans 'Name or E-mail' %}</label>
+                            <div class="col-sm-12">
+                                <input type="text" class="form-control" id="nameormail">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="col-sm-12 control-label" style="text-align: left">{% trans "What do you need us to ameliorate for you" %}</label>
+                            <div class="col-sm-12">
+                                <textarea  class="form-control" id="opinion"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default lock" data-dismiss="modal">{% trans 'Cancel' %}</button>
+                    <button type="button" class="btn btn-primary">{% trans 'Submit' %}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+ {% block js %}
+        {{ block.super }}
+    <script type="text/javascript">
+        (function() {
+            $('div#response button.yes').click(function() {
+                var pertinence = 'yes'
+                var articleId = "{{ current_sub_chapter.id }}"
+                var params = {format: 'json', pertinence: pertinence, article_id: articleId};
+                saveArticlePertinence(params)
+            });
+            $('div.modal-dialog button.btn.btn-primary').click(function() {
+                var pertinence = 'no'
+                var articleId = "{{ current_sub_chapter.id }}"
+                var comment = $('textarea#opinion').val()
+                var author = $('input#nameormail').val()
+                if (comment == "" || author == ""){
+                    $('div#top-notice-ctnr span').html("Please identify yourself and give a point of view").addClass('failure');
+                    $('#top-notice-ctnr').fadeIn().delay(10000).fadeOut();
+                    $('input#nameormail').focus()
+                    return false
+                }
+                var params = {format: 'json', pertinence: pertinence, article_id: articleId, author: author, comment: comment};
+                saveArticlePertinence(params)
+                return false
+            });
+            function saveArticlePertinence(parameters) {
+                $('body, button').css('cursor','wait');
+                var endpoint = "{% url 'give_point_of_view' %}";
+                $.getJSON(endpoint, parameters, function(data) {
+                    $('body, button.confirm').css('cursor','default');
+                    if (data.error) {
+                        $('div#top-notice-ctnr span').html(data.error).addClass('failure');
+                        $('#top-notice-ctnr').fadeIn().delay(5000).fadeOut();
+                    } else {
+                        $('div#top-notice-ctnr span').html(data.message);
+                        $('#top-notice-ctnr').removeClass('hidden').show().delay(5000).fadeOut();
+                        $('div#response').fadeOut();
+                        $('div#rating .btn-default.lock').click()
+                    }
+                    return false
+                });
+            }
+        })()
+    </script>
+{% endblock %}

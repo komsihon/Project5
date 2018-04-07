@@ -1,0 +1,128 @@
+{% extends "core/base_bs.html" %}
+{% load i18n humanize staticfiles auth_tokens %}
+{% block meta %}
+<meta name="abstract" content=""/>
+{% endblock %}
+{% block page_title %} <title>{% trans 'Support' %} - {% trans "Home" %}</title> {% endblock %}
+{% block head_style %}
+        {{ block.super }}
+    <style>
+/* Float Shadow */
+        .hvr-float-shadow {display: inline-block;vertical-align: middle;-webkit-transform: translateZ(0);transform: translateZ(0);box-shadow: 0 0 1px rgba(0, 0, 0, 0);-webkit-backface-visibility: hidden;backface-visibility: hidden;-moz-osx-font-smoothing: grayscale;position: relative;-webkit-transition-duration: 0.3s; transition-duration: 0.3s;-webkit-transition-property: transform;transition-property: transform}
+        .hvr-float-shadow:before {pointer-events: none;position: absolute;z-index: -1;content: '';top: 100%;left: 5%; height: 10px; width: 90%;opacity: 0;background: -webkit-radial-gradient(center, ellipse, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 80%);background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 80%); -webkit-transition-duration: 0.3s; transition-duration: 0.3s; -webkit-transition-property: transform, opacity; transition-property: transform, opacity;}
+        .hvr-float-shadow:hover, .hvr-float-shadow:focus, .hvr-float-shadow:active {-webkit-transform: translateY(-5px);transform: translateY(-5px);}
+        .hvr-float-shadow:hover:before, .hvr-float-shadow:focus:before, .hvr-float-shadow:active:before {opacity: 1;-webkit-transform: translateY(5px);transform: translateY(5px);}
+
+        .alert {border: 1px solid transparent; border-radius: 4px; margin-bottom: 20px; padding: 15px; width: 868px;}
+        .alert-danger {color: #b94a48; background-color: #f2dede; border-color: #ebccd1}
+        .page-ctnr {background-color: #fff; float: left; padding: 50px}
+
+        ul#apps {float: left}
+        ul#apps li {background-color: #fff; box-sizing: border-box;float: left; margin: 1.5em .7em; overflow: hidden}
+        ul#apps li:hover {box-shadow: 0 4px 16px #e0e0e0;}
+        ul#apps li > a {float: left; text-align: center; text-decoration: none; padding: 2%; width: 96%}
+        ul#apps li img {vertical-align: middle; width: 95%}
+        li h3 {clear: both; font-size: 18px; font-family: 'open sans',sans-serif; margin: 1em 0 4px;min-height: 0; overflow: hidden; text-align: left; white-space: normal; width: 200%}
+
+        #wrapper {padding-left: 0}
+        body .banner {height: 120px; margin-top: 50px}
+        h2.col-xs-6.col-sm-6 {font-size: 22px;margin-top: 50px; margin-left: -20px}
+        h2.head-title {color: #2c3e50; float: left; margin-top: 40px}
+            /* Smartphones (portrait and landscape) ----------- */
+        @media only screen
+        and (min-device-width : 320px)
+        and (max-device-width : 480px) {
+            h2.head-title {font-size: 22px; margin-top: 15px}
+            .page-ctnr.col-xs-12 {padding: 1em 0;}
+            ul#apps li {height: 150px; margin: 1em 0 1em 0;}
+            li h3 {margin: 1em 0 4px -15px;}
+
+        }
+
+        /* Smartphones (landscape) ----------- */
+        @media only screen
+        and (min-width : 481px) {
+
+        }
+
+
+
+        /* iPhone 5 (portrait & landscape)----------- */
+        @media only screen
+        and (min-device-width : 320px)
+        and (max-device-width : 568px) {
+
+        }
+
+        /* iPhone 5 (landscape)----------- */
+        @media only screen
+        and (min-device-width : 320px)
+        and (max-device-width : 568px)
+        and (orientation : landscape) {
+
+        }
+
+
+        /* iPads (portrait and landscape) ----------- */
+        @media only screen
+        and (min-device-width : 768px)
+        and (max-device-width : 1024px) {
+
+        }
+
+        /* iPads (landscape) ----------- */
+        @media only screen
+        and (min-device-width : 768px)
+        and (max-device-width : 1024px)
+        and (orientation : landscape) {
+
+        }
+
+        /* Desktops and laptops ----------- */
+        @media only screen
+        and (min-width : 1224px) {
+        }
+
+        /* Large screens ----------- */
+        @media only screen
+        and (min-width : 1824px) {
+
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="row banner" style="">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <h2 class="col-xs-12 col-sm-6 col-md-5 col-lg-5 head-title" style="">
+                Ikwen applications support
+            </h2>
+    </div>
+    {% include 'snippets/fb_sdk.html' %}
+    <div class="row">
+        <div class="col-md-1 clearfix hidden-xs"></div>
+        <div class="page-ctnr col-sm-10 col-xs-12 subtle-shade">
+            <ul id='apps'style="">
+                {% for support in support_list %}
+                <li class="col-xs-6 col-sm-3 col-md-2 hvr-float-shadow">
+                    <a href="{% url 'topic_list' support.slug %}">
+                        {% if support.logo.name %}
+                            <img src="{{ support.app.logo.url }}" style="float: left; overflow: hidden">
+                        {% endif %}
+                        <h3>{{ support.name }}</h3>
+                    </a>
+                </li>
+                {% endfor %}
+
+            </ul>
+        </div>
+        <div class="col-md-1 clearfix hidden-xs"></div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script type="text/javascript">
+        (function() {
+
+        })()
+    </script>
+{% endblock %}

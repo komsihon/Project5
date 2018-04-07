@@ -1,0 +1,52 @@
+{% extends "support/base.html" %}
+{% load i18n humanize static auth_tokens %}
+
+{% block meta %}
+    {{ block.super }}
+    <meta name="og:image" content="">
+    <meta name="og:title" content="">
+    <meta name="og:description" content="">
+{% endblock %}
+
+{% block page_title %} <title>{% trans 'Support' %} - {% trans "Home" %}</title> {% endblock %}
+
+{% block content %}
+    <h1 style="display: none"></h1>
+    <p style="display: none"></p>
+    <div class="row banner"></div>
+    <div id="app-list" class="">
+        <div class="col-md-2 clearfix hidden-xs"></div>
+        <div class="page-ctnr col-sm-8 subtle-shade" style="">
+            <ul id='apps'>
+                {% for support in support_list %}
+                    <li class="col-sm-3">
+                        <div class="app hvr-float-shadow">
+                            <a href="{% url 'topic_list' support.slug %}" title="{{ support.short_description }}">
+                             {% if support.logo.name %}
+                                 <img src="{{ settings.IKWEN_MEDIA_URL }}{{ support.logo.name }}" class="img-responsive" style="">
+                             {% endif %}
+                                <div class="app-meta">
+                                    <p>{{ support.name }}</p>
+{#                                    {% if  support.version %}#}
+{#                                    <p>Version: {{ support.version }}</p>#}
+{#                                    {% else %}#}
+{#                                    <p>Version: 1.0</p>#}
+{#                                    {% endif %}#}
+                                </div>
+                            </a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-md-2 clearfix hidden-xs"></div>
+    </div>
+{% endblock %}
+
+{% block custom_js %}
+    <script type="text/javascript">
+        (function() {
+            $('form#search input.input-sm').attr('placeholder', 'Search on ikwen')
+        })()
+    </script>
+{% endblock %}

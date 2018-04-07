@@ -1,0 +1,40 @@
+{% extends "support/base.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% block page_title %} <title> {{ WEBSITE_NAME }} | {% trans "Search" %} </title> {% endblock %}
+{% block custom_head %}
+    <style type="text/css">
+        section header {font-size: 2em}
+        nav#sub, #sales-logout {display: none}
+    </style>
+{% endblock %}
+{% block content %}
+    <div id="content" class="search">
+        <div class="wrapper">
+            <section>
+                {% if items|length == 0 %}
+                    <header class="no-result">
+                        {% trans "No result for" %} <b>"{{ request.GET.radix }}"</b>
+
+                    </header>
+                {% else %}
+                    <header class='main-title'> {% trans "Results for" %} <b>"{{ request.GET.radix }}"</b></header>
+                    {% for post in posts %}
+                        <div class='item media'>
+
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </section>
+            <div class="clear"></div>
+        </div>
+    </div>
+{% endblock %}
+{% block custom_js %}
+    <script type="text/javascript">
+        (function() {
+
+        })()
+    </script>
+
+{% endblock %}

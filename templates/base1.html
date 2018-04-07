@@ -1,0 +1,122 @@
+{% load i18n %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, shrink-to-fit=no, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <meta property="og:title" content="{{ WEBSITE_NAME }} - {{ config.slogan }}"/>
+        <meta property="og:description" content=""/>
+        <link rel="icon" href="{% static 'support/img/favicon.ico' %}" type="image/x-icon">
+            {% block meta %}{% endblock %}
+            {% block page_title %}{% endblock %}
+            {% if request.META.HTTP_HOST == 'localhost' %}
+                <style type="text/css">
+                    @font-face {
+                        font-family: Open Sans;
+                        src: local(Open Sans), url('/static/support/css/fonts/Open_Sans.woff') format('opentype');
+                    }
+                </style>
+            {% else %}
+                <style type="text/css">
+                    /* Open Sans Light, Normal, Bold */
+                    @font-face {
+                        font-family: Open Sans;
+                        src: local(Open Sans), url('/Open_Sans.woff') format('opentype');
+                    }
+                    /* Open Sans Latin Lighter */
+                    @font-face {
+                        font-family: 'Open Sans';
+                        font-style: normal;
+                        font-weight: 300;
+                        src: local('Open Sans Light'), local('OpenSans-Light'), url(/Open_Sans_Light) format('woff2');
+                                      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+                    }
+                </style>
+            {% endif %}
+            <link rel="stylesheet" type="text/css" href="{% static 'support/css/support.css' %}?version=1.0">
+            <style type="text/css">
+                body {color: #444; font-weight: 400; font-size: 18px;font-family: "Open Sans", ubuntu, sans-serif; margin: 0;zoom: 100%}
+                body .banner {background-color: #37ADDB; height: 490px; position: absolute; width: 100%; z-index: -2}
+
+            </style>
+
+
+        <link rel="stylesheet" type="text/css" href="{% static 'support/css/support.css' %}?version=1.0">
+
+        <!-- Bootstrap Core CSS -->
+        <link href="{% static 'support/css/bootstrap.min.css' %}" rel="stylesheet">
+
+        <!-- Custom CSS -->
+        <link href="{% static 'support/css/simple-sidebar.css' %}" rel="stylesheet">
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <style type="text/css">
+            body {color: #444; font-weight: 400; font-family: "Open Sans", ubuntu, sans-serif; margin: 0;zoom: 100%}
+            body a {color: #444}
+        </style>
+
+        {% block custom_head %}
+        {% endblock %}
+    </head>
+    <body>
+         <div id="top-notice-ctnr" class="hidden">
+            <span class="floating-notice" style="float: none; position: static"> </span>
+        </div>
+        <div id="wrapper">
+            <nav class="navbar navbar-default navbar-fixed-top">
+                <div class="row">
+                    <div class="col-xs-2 clearfix">
+                        <a href="{% url 'home' %}" type="button" class="btn">
+                           <span class="glyphicon glyphicon-home" style="font-size: 2em; top: 6px;left: -9px;"></span>
+                            <span class="hidden-xs">{{ application.name }}</span>
+                        </a>
+                    </div>
+
+                    <form id="custom-search-input" action="" method="get" autocomplete="off">
+                        <div class="input-group col-md-8  col-xs-10">
+                            <input type="text"  name="radix" class="search-query form-control" placeholder="Search" />
+                            <span class="input-group-btn">
+                                <button class="btn btn-info" type="button">
+                                    <span class=" glyphicon glyphicon-search"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </form>
+                    <div class="col-xs-2 clearfix hidden-xs"></div>
+                </div>
+
+            </nav>
+            {% block banner %}{% endblock %}
+            <!-- Sidebar -->
+                {% block side_nav %}{% endblock %}
+            <!-- /#sidebar-wrapper -->
+
+            <!-- Page Content -->
+                    {% block content %}
+                    {% endblock %}
+            <!-- /#page-content-wrapper -->
+
+        </div>
+
+        <script src="{% static 'support/js/jquery-1.12.4.min.js' %}"></script>
+
+        <!-- Bootstrap Core JavaScript -->
+        <script src="{% static 'support/js/bootstrap.min.js' %}"></script>
+{#        <script>#}
+{#            (function() {#}
+{##}
+{#            })()#}
+{#        </script>#}
+        {% block custom_js %}{% endblock %}
+    </body>
+</html>

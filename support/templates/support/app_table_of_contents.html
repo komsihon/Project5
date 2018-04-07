@@ -1,0 +1,47 @@
+{% extends "support/base.html" %}
+{% load i18n humanize static auth_tokens %}
+
+{% block meta %}
+    {{ block.super }}
+    {% if application.logo.name %}
+        <meta name="og:image" content="{{ application.logo.url  }}">
+    {% endif %}
+    <meta name="og:title" content="{{ application.name }}">
+    <meta name="og:description" content="{{ application.short_description }}">
+{% endblock %}
+
+{% block page_title %} <title>{{ application.name }} - {% trans 'Table of contents' %}</title> {% endblock %}
+
+{% block content %}
+    <div id="content" class="container">
+        <h1>Bienvenue dans le Centre d'aide {{ application.name }}</h1>
+        <nav class="accordion-homepage">
+            {% for chapter in chapters %}
+            <section class="parent">
+                <h2>{{ chapter.chapter}}</h2>
+                <div class="overflow">
+                    <div class="children">
+                        {% for c in chapter %}
+                            <div class="child">
+                                <a href="{% url 'support_detail' c.chapter.app.slug c.slug %}">{{ c.title }}</a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+            {% endfor %}
+        </nav>
+    </div>
+{% endblock %}
+ {% block js %}
+        {{ block.super }}
+    <script type="text/javascript">
+        (function() {
+{#            $('nav.accordion-homepage').find(".parent").first().addClass('selected')#}
+            $('nav.accordion-homepage .parent:not(.selected) h2').on('click', function() {
+                $('nav.accordion-homepage').find(".parent.selected").removeClass('selected')
+                $(this).parent('.parent').addClass('selected')
+            })
+        })()
+    </script>
+{% endblock %}
