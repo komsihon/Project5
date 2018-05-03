@@ -21,7 +21,12 @@
                 {% for support in support_list %}
                     <li class="col-sm-3">
                         <div class="app hvr-float-shadow">
+                        {% if support.chapter_count > 1 %}
                             <a href="{% url 'topic_list' support.slug %}" title="{{ support.short_description }}">
+                        {% elif support.chapter_count == 1 %}
+                            <a href="{% url 'topic_detail' support.slug support.topic.slug %}" title="{{ support.short_description }}">
+                        {% endif %}
+{#                            <a href="{% url 'topic_list' support.slug %}" title="{{ support.short_description }}">#}
                              {% if support.logo.name %}
                                  <img src="{{ settings.IKWEN_MEDIA_URL }}{{ support.logo.name }}" class="img-responsive" style="">
                              {% endif %}

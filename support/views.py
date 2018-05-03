@@ -3,12 +3,23 @@ from django.shortcuts import render, get_object_or_404
 import os
 # Create your views here.
 from django.views.generic.base import TemplateView
+from django.views.generic.list import ListView
+from django.utils import translation
 
 from conf import settings
-from support.models import Application, Chapter, SubChapter, UserPointOfView
+from support.models import Application, Chapter, Topic, UserPointOfView
 from django.http import HttpResponse
 import json
 from ikwen.core.models import Application
+
+
+ENGLISH = 'English'
+FRENCH = 'Francais'
+
+LANGUAGE_CHOICES = (
+    (ENGLISH, 'English'),
+    (FRENCH, 'Francais')
+)
 
 POST_PER_PAGE = 8
 
@@ -16,57 +27,61 @@ MEDIA_DIR = settings.MEDIA_ROOT + 'tiny_mce/'
 TINYMCE_MEDIA_URL = settings.MEDIA_URL + 'tiny_mce/'
 
 
-class SupportList(TemplateView):
+class Home(TemplateView):
     template_name = 'support/home.html'
 
     def get_context_data(self, **kwargs):
-        context = super(SupportList, self).get_context_data(**kwargs)
+        context = super(Home, self).get_context_data(**kwargs)
         support_list = Application.objects.all()
+        for support in support_list:
+            support.chapter_count = Chapter.objects.filter(app=support, publish=True).count()
+            if support.chapter_count == 1:
+                chapter = Chapter.objects.filter(app=support, publish=True)[0]
+                support.topic = Topic.objects.filter(chapter=chapter, publish=True)[0]
         context['support_list'] = support_list
         return context
 
 
-class TopicList(TemplateView):
-    template_name = 'support/app_table_of_contents.html'
+class TopicList(ListView):
+    template_name = 'support/topic_list.html'
+    context_object_name = 'chapter_queryset'
+    model = Chapter
 
     def get_context_data(self, **kwargs):
         context = super(TopicList, self).get_context_data(**kwargs)
+        lang = translation.get_language()
+        if 'en' in lang:
+            language = ENGLISH
+        else:
+            language = FRENCH
         application_slug = kwargs['application_slug']
         application = Application.objects.get(slug=application_slug)
-        chapters = Chapter.objects.filter(app=application, publish=True)
-        sub_chap = []
-        for chapter in chapters:
-            c = SubChapter.objects.filter(chapter=chapter)
-            if c.count() > 0:
-                c.chapter = chapter
-                sub_chap.append(c)
-        # sub_chapters = SubChapter.objects.filter(chapter__in=chapters).order_by('order_of_appearance')
-        # sub_chapters = SubChapter.objects.filter(chapter__in=chapters).order_by('chapter')
-        context['chapters'] = sub_chap
         context['application'] = application
+        # context[self.get_context_object_name(self.object_list)] = Chapter.objects.filter(app=application,
+        #  language=language, publish=True)
+        context[self.get_context_object_name(self.object_list)] = Chapter.objects.filter(app=application, publish=True)
         return context
 
 
-class SupportDetails(TemplateView):
-    template_name = 'support/tuto_detail.html'
+class TopicDetail(TemplateView):
+    template_name = 'support/topic_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(SupportDetails, self).get_context_data(**kwargs)
+        context = super(TopicDetail, self).get_context_data(**kwargs)
+        lang = translation.get_language()
+        if 'en' in lang:
+            language = ENGLISH
+        else:
+            language = FRENCH
         application_slug = kwargs['application_slug']
-        slug = kwargs['sub_chapter_slug']
-        application = Application.objects.get(slug=application_slug)
-        chapters = Chapter.objects.filter(app=application, publish=True)
-        sub_chap = []
-        for chapter in chapters:
-            c = SubChapter.objects.filter(chapter=chapter)
-            if c.count() > 0:
-                c.chapter = chapter
-                sub_chap.append(c)
-        sub_chapter = get_object_or_404(SubChapter, slug=slug)
-        context['current_sub_chapter'] = sub_chapter
-        context['chapters'] = chapters
-        context['sub_chapter'] = sub_chap
-        context['sibling_sub_chapter'] = SubChapter.objects.filter(chapter=sub_chapter.chapter)
+        topic_slug = kwargs['topic_slug']
+        app = Application.objects.get(slug=application_slug)
+        chapter_list = Chapter.objects.filter(app=app, publish=True)
+        # chapter_list = Chapter.objects.filter(app=app, language=language, publish=True)
+        # topic = get_object_or_404(Topic, slug=topic_slug, language=language)
+        topic = get_object_or_404(Topic, slug=topic_slug)
+        context['chapter_list'] = chapter_list
+        context['topic'] = topic
         return context
 
 
@@ -76,19 +91,6 @@ class AdminHome(TemplateView):
 
 class Search(TemplateView):
     template_name = 'support/search.html'
-
-    # def get_context_data(self, **kwargs):
-    #     context = super(Search, self).get_context_data(**kwargs)
-    #     application_slug = kwargs['application_slug']
-    #     radix = self.request.GET.get('radix')
-    #     if radix == '':
-    #         radix = "No-radix"
-    #     application = Application.objects.get(slug=application_slug)
-    #
-    #     entries = grab_items_by_radix(application, radix)
-    #     context['pages'] = get_paginated_view(self.request, entries, POST_PER_PAGE)
-    #     context['entries'] = entries
-    #     return context
 
 
 def get_paginated_view(rq, items, nos):
@@ -116,7 +118,7 @@ def grab_items_by_radix(application, radix):
     return items
 
 
-def save_pertinence(request, *args, **kwarg):
+def submit_review(request, *args, **kwarg):
     author = request.GET.get("author")
     pertinence = request.GET.get("pertinence")
     if pertinence == 'yes':
@@ -130,8 +132,8 @@ def save_pertinence(request, *args, **kwarg):
             json.dumps({'error': "An error occured"}),
             content_type='application/json'
         )
-    article = get_object_or_404(SubChapter, pk=article_id)
-    user_point_of_view = UserPointOfView(author=author, pertinence=pertinence, comment=comment, article=article)
+    article = get_object_or_404(Topic, pk=article_id)
+    user_point_of_view = UserPointOfView(author=author, pertinence=pertinence, comment=comment, topic=article)
     user_point_of_view.save()
     if pertinence == UserPointOfView.YES:
         return HttpResponse(

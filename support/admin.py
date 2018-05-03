@@ -6,7 +6,7 @@ from ikwen.billing.models import Invoice, Product, Subscription, Payment, Paymen
 from ikwen.core.models import ConsoleEvent, Service
 from ikwen.theming.models import Theme, Template
 
-from support.models import Chapter, SubChapter
+from support.models import Chapter, Topic
 
 
 class MemberProfileAdmin(admin.ModelAdmin):
@@ -20,7 +20,7 @@ class ChapterAdmin(admin.ModelAdmin):
     list_filter = ('app', 'publish')
 
 
-class SubChapterAdmin(admin.ModelAdmin):
+class TopicAdmin(admin.ModelAdmin):
     list_display = ('title', 'chapter', 'member', 'publish')
     prepopulated_fields = {"slug": ("title",)}
     search_fields = ('title', )
@@ -29,7 +29,7 @@ class SubChapterAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.member = request.user
-        super(SubChapterAdmin, self).save_model(request, obj, form, change)
+        super(TopicAdmin, self).save_model(request, obj, form, change)
 
 
 admin.site.unregister(Invoice)
@@ -47,5 +47,5 @@ admin.site.unregister(Subscription)
 # admin.site.unregister(Member)
 
 admin.site.register(Chapter, ChapterAdmin)
-admin.site.register(SubChapter, SubChapterAdmin)
-admin.site.register(Member, MemberAdmin)
+admin.site.register(Topic, TopicAdmin)
+# admin.site.register(Member, MemberAdmin)
