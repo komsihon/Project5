@@ -1,0 +1,53 @@
+{% extends 'faq/general_faq.html' %}
+{% load i18n staticfiles auth_tokens static %}
+{% block page_title %}
+    <title> ikwen FAQ-{{ topic.question }} </title>
+{% endblock %}
+
+{% block body-page %}
+    <div class="container tsunami-core">
+        <div class="container-fluid tsunami-core-child">
+            {% block inner-body %}
+<!--                {% for i in   %}-->
+                <div>
+                    <span><a href="#">{{ topic.category.name }}</a>&nbsp;&#8594;&nbsp;<a href="#">{{ topic.cat }}</a></span>
+                    <hr>
+                </div>
+                <div>
+                    <h1>{{ topic.question }}</h1>
+                    <span>
+                        <p>
+                           {{ topic.answer }}
+                        </p>
+                    </span>
+                </div>
+<!--                {% endfor %}-->
+
+            {% endblock %}
+            <div>
+                <hr>
+                <div>
+                    Was this article helpful?
+                    <a href="#" class="anchor1">
+                        No
+                    </a>
+                    <a href="#" class="anchor1">
+                        Yes
+                    </a>
+                </div>
+                <hr>
+
+            </div>
+            <div class="container">
+                    <div class="faq-home-button">
+                        <a href="{% url 'faqhome' %}" class="anchor-style2">
+                            FAQ Home
+                        </a>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+<div class="edge-swipe-overlay"></div>

@@ -1,0 +1,358 @@
+{% extends 'core/base_bs.html' %}
+{% load i18n static %}
+{% block head_style %}
+    {{ block.super }}
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="http://assets.ikwen.com/ikwen/favicons/ms-icon-144x144.png">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+{#    <link rel='stylesheet' href="{% static 'faq/css/flatly.bootstrap.min.css' %}" />#}
+{#    <link rel='stylesheet' href="{% static 'faq/css/base.css' %}" />#}
+{#    <link rel="stylesheet" type="text/css" href="{% static 'faq/css/tsunami_homepage.css' %}">#}
+{#    <link rel="stylesheet" href="{% static 'faq/css/base_default.css' %}">#}
+    <!-- Custom css -->
+      <link rel="stylesheet" type="text/css" href="{% static 'faq/css/faq.css' %}">
+
+
+
+{% endblock %}
+
+{% block page_title %}
+    <title>ikwen FAQ-general</title>
+{% endblock %}
+
+{% block content %}
+    {% block banner %}
+        <div class="container-fluid question-search">
+            <div class="row custom_row question-search1">
+                <div class="container-fluid" >
+                    <div class="col-md-6 question-search3">
+{#                        section-features-text #}
+                        <form role="form" class="horizontal-form"  action="#" method="get" name="formQuestion" id="form-question">
+                            <div class="question-guide">
+                                <p class="col-12"><h2>How can we help you?</h2></p>
+                            </div>
+                            <div class="form-group form-group-lg" id="input">
+                                <label class="col-lg-9 col-sm-1 col-md-6 col-xl-1 sr-only" for="question">question search</label>
+                                <input type="text" value="" placeholder=" Describe your question" name="question" id="input-question" size="60" autofocus class="form-control">
+                            </div>
+                            <div class="browsing-guide" >
+                                <p class="col-12"><h4>You can also browse the topics to find what you are looking for</h4></p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    {% endblock %}
+    {% block body-page %}
+        <div class="container-fluid" id="corpse-general-faq">
+            <div class="row">
+                <!-- Card -->
+                    <!--Accordion wrapper-->
+                        <div class="accordion accordion-2 md-accordion py-5 px-4" id="accordionEx1" role="tablist" aria-multiselectable="true">
+                            <!-- Accordion card -->
+                                <div class="card mb-lg-auto mb-5 col-lg-6 col-md-6 col-sm-6 col-sm-offset-3 col-lg-offset-3 col-md-offset-3 row-2 accordion-card">
+                                    <!-- Card header -->
+                                        <div class="card-header accordion-header" role="tab" id="headingTwo1">
+                                            <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx1" href="#collapseTwo1" aria-expanded="false" aria-controls="collapseTwo1" >
+                                                <h4 class="mb-0 headding-style">Customers  contacts and community<i class="fas fa-angle-down rotate-icon italic-style"></i></h4>
+                                            </a>
+                                        </div>
+                                    <!-- Card body -->
+                                        <div id="collapseTwo1" class="collapse accordion-body" role="tabpanel" aria-labelledby="headingTwo1" data-parent="#accordionEx1">
+                                            <div class="card-body mb-1">
+                                                <ul class="list-unstyled nav nav-pills nav-stacked">
+                                                    <li><a href="" class="anchor-style"><span>Create profile</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>Add contact</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>Follow/Unfollow somebody</span></a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                </div>
+
+                            <!-- Accordion card -->
+                                <div class="card mb-lg-auto mb-5 col-lg-6 col-md-6 col-sm-6 col-sm-offset-3 col-lg-offset-3 col-md-offset-3 row-2 accordion-card">
+                                    <!-- Card header -->
+                                        <div class="card-header accordion-header" role="tab" id="headingTwo2">
+                                            <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx1" href="#collapseTwo2" aria-expanded="false" aria-controls="collapseTwo2">
+                                                <h4 class="mb-1 headding-style">Products and categories<i class="fas fa-angle-down rotate-icon italic-style"></i></h4>
+                                            </a>
+                                        </div>
+                                    <!-- Card body -->
+                                        <div id="collapseTwo2" class="collapse accordion-body" role="tabpanel" aria-labelledby="headingTwo2" data-parent="#accordionEx1" >
+                                            <div class="card-body" >
+                                                <ul class="list-unstyled nav nav-pills nav-stacked" >
+                                                    <li><a href="" class="anchor-style"><span>How do I order?</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>Can I cancel an order? </span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>Check my basket before payment</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>How do I add a product?</span> </a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                </div>
+
+                            <!-- Accordion card -->
+                                <div class="card mb-lg-auto mb-5 col-lg-6 col-md-6 col-sm-6 col-sm-offset-3 col-lg-offset-3 col-md-offset-3 row-2 accordion-card">
+                                    <!-- Card header -->
+                                        <div class="card-header accordion-header" role="tab" id="headingTwo7">
+                                            <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx1" href="#collapseTwo7" aria-expanded="false" aria-controls="collapseTwo7" >
+                                                <h4 class="mb-0 headding-style">Deployment<i class="fas fa-angle-down rotate-icon italic-style"></i></h4>
+                                            </a>
+                                        </div>
+                                    <!-- Card body -->
+                                        <div id="collapseTwo7" class="collapse accordion-body" role="tabpanel" aria-labelledby="headingTwo7" data-parent="#accordionEx1">
+                                            <div class="card-body mb-1 " >
+                                                <ul class="list-unstyled nav nav-pills nav-stacked " >
+                                                    <li><a href="" class="anchor-style"><span>What is “Deploy” ? What do I get from Deploying ?</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>What I am paying for exactly ?</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>How do I pay ?</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>Do I pay once for all ? What happens after the 3 months ?</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>What if I don’t pay at the end of the period, are my data deleted ?</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>Can I pay for a year ?</span></a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                            <!-- Accordion card -->
+                                <div class="card mb-lg-auto mb-5 col-lg-6 col-md-6 col-sm-6 col-sm-offset-3 col-lg-offset-3 col-md-offset-3 row-2 accordion-card">
+                                    <!-- Card header -->
+                                        <div class="card-header accordion-header" role="tab" id="headingTwo3">
+                                          <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx1" href="#collapseTwo3"
+                                            aria-expanded="false" aria-controls="collapseTwo3">
+                                            <h4 class="mb-0 headding-style">
+                                              Cloud Customer Manager <i class="fas fa-angle-down rotate-icon italic-style"></i>
+                                            </h4>
+                                          </a>
+                                        </div>
+                                    <!-- Card body -->
+                                        <div id="collapseTwo3" class="collapse accordion-body" role="tabpanel" aria-labelledby="headingTwo3" data-parent="#accordionEx1">
+                                          <div class="card-body">
+                                              <ul class="list-unstyled nav nav-pills nav-stacked " >
+                                                  <li><a href="" class="anchor-style"><span>How do I add contact to my CCM?</span></a></li>
+                                                  <li><a href="" class="anchor-style"><span>How does Tsunami build the customer database?</span></a></li>
+                                                  <li><a href="" class="anchor-style"><span>How does Tsunami send my products to potential customers?</span></a></li>
+                                                  <li><a href="" class="anchor-style"><span>How do I get my icon on my customers' phone?</span></a></li>
+                                                  <li><a href="" class="anchor-style"><span>Can I use my own SMS API?</span></a></li>
+                                                  <li><a href="" class="anchor-style"><span>Can I host the platform myself on my personal hosting package?</span></a></li>
+                                                  <li><a href="" class="anchor-style"><span>Do you offer professional e-mails?</span></a></li>
+                                                  <li><a href="" class="anchor-style"><span></span></a></li>
+                                              </ul>
+                                          </div>
+                                        </div>
+                                </div>
+
+                            <!-- Accordion card -->
+                                <div class="card mb-lg-auto mb-5 col-lg-6 col-md-6 col-sm-6 col-sm-offset-3 col-lg-offset-3 col-md-offset-3 row-2 accordion-card">
+                                    <!-- Card header -->
+                                        <div class="card-header accordion-header" role="tab" id="headingThree4">
+                                          <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx1" href="#collapseThree4"
+                                            aria-expanded="false" aria-controls="collapseThree4"><h4 class="mb-0 headding-style">Customers retention program  <i class="fas fa-angle-down rotate-icon italic-style"></i>
+                                            </h4>
+                                          </a>
+                                        </div>
+                                    <!-- Card body -->
+                                        <div id="collapseThree4" class="collapse accordion-body" role="tabpanel" aria-labelledby="headingThree4" data-parent="#accordionEx1">
+                                          <div class="card-body">
+                                              <ul class="list-unstyled nav nav-pills nav-stacked " >
+                                                  <li><a href="" class="anchor-style"><span>How do I set revivals?</span></a></li>
+                                                  <li><a href="" class="anchor-style"><span>What is smart revivals? How it works</span></a></li>
+                                                  <li><a href="" class="anchor-style"><span>How coupons work? How do I create and distribute coupons?</span></a></li>
+                                                  <li><a href="" class="anchor-style"><span>Where does money go after a mobile money online Payment ? How do I get my money ?</span></a></li>
+                                                  <li><a href="" class="anchor-style"><span>Configure periodic notifications</span></a></li>
+                                              </ul>
+                                          </div>
+                                        </div>
+                                </div>
+
+                            <!-- Accordion card -->
+                                <div class="card mb-lg-auto mb-5 col-lg-6 col-md-6 col-sm-6 col-sm-offset-3 col-lg-offset-3 col-md-offset-3 row-2 accordion-card">
+                                    <!-- Card header -->
+                                        <div class="card-header accordion-header" role="tab" id="headingTwo5">
+                                            <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx1" href="#collapseTwo5" aria-expanded="false" aria-controls="collapseTwo5">
+                                                <h4 class="mb-0 headding-style">Security and Privacy<i class="fas fa-angle-down rotate-icon italic-style"></i></h4>
+                                            </a>
+                                            </div>
+                                    <!-- Card body -->
+                                        <div id="collapseTwo5" class="collapse accordion-body" role="tabpanel" aria-labelledby="headingTwo5" data-parent="#accordionEx1">
+                                            <div class="card-body" >
+                                                <ul class="list-unstyled nav nav-pills nav-stacked " >
+                                                    <li><a href="" class="anchor-style"><span>Are transactions secure on ikwen?</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>How do I add administrators?</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>How do I add/retrieve permissions?</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>Are we safe on ikwen?</span></a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                </div>
+
+                            <!-- Accordion card -->
+                                <div class="card mb-lg-auto mb-5 col-lg-6 col-sm-6 col-md-6 col-sm-offset-3  col-lg-offset-3 col-md-offset-3 row-2 accordion-card">
+                                    <!-- Card header -->
+                                        <div class="card-header accordion-header" role="tab" id="headingTwo6">
+                                            <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx1" href="#collapseTwo6" aria-expanded="false" aria-controls="collapseTwo6">
+                                                <h4 class="mb-0 headding-style">Troubleshooting<i class="fas fa-angle-down rotate-icon italic-style"></i></h4>
+                                            </a>
+                                        </div>
+                                    <!-- Card body -->
+                                        <div id="collapseTwo6" class="collapse accordion-body" role="tabpanel" aria-labelledby="headingTwo6" data-parent="#accordionEx1">
+                                            <div class="card-body" >
+                                                <ul class="list-unstyled nav nav-pills nav-stacked " >
+                                                    <li><a href="" class="anchor-style"><span>Nothing appears on my homepage. Why?</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>How do I get my money from online sales?</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>I can't confirm a purchase, there's no Checkout/Payment button</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>Products are not well seen on the website</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>Create profile</span></a></li>
+                                                    <li><a href="" class="anchor-style"><span>Add contact</span></a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                </div>
+                        </div>
+                <!-- Accordion wrapper -->
+            </div>
+
+        </div>
+    {% endblock %}
+{% endblock %}
+{% block footer %}
+ <footer class="footer">
+     <div class="container">
+         <div class="row footer-core" >
+             <div class="col-sm-3" id="company-info">
+                 <a href="ikwen.com">
+                     <h4  class="logo footer-mobile-adjust" id="company-info-name">
+                         ikwen</h4>
+                 </a>
+             </div>
+             <div class="col-sm-3 col-xs-4 footer-mobile-adjust">
+                 <h5 class="h5-footer-core">Get started</h5>
+                 <ul class="unordered-footer-lists">
+                     <li><a class="footer-links" href="/tsunami/">Home</a></li>
+                     <li><a class="footer-links" href="http://www.ikwen.com/" target="_blank">Sign In</a></li>
+                 </ul>
+             </div>
+             <div class="col-sm-3 col-xs-4 footer-mobile-adjust">
+                 <h5 class="h5-footer-core">About us</h5>
+                 <ul class="unordered-footer-lists">
+                     <li><a class="footer-links" href="http://www.ikwen.com/about" target="_blank">Our Company</a></li>
+                     <li><a class="footer-links" href="#" target="_blank">Reviews</a></li>
+                 </ul>
+             </div>
+             <div class="col-sm-3 col-xs-4 footer-mobile-adjust">
+                 <h5 class="h5-footer-core">Support</h5>
+                 <ul class="unordered-footer-lists">
+                     <li><a class="footer-links"href="http://blog.ikwen.com/" target="_blank">Blog</a></li>
+                     <li><a class="footer-links" href="http://support.ikwen.com/" target="_blank">Help desk</a></li>
+                 </ul>
+             </div>
+         </div>
+     </div>
+     <div class="footer-copyright mobile-adjust ">
+         © 2019 <a class="company-name" href="http://www.ikwen.com"><strong class="copy-right-name">ikwen</strong></a>.
+     </div>
+ </footer>
+
+{% endblock %}
+
+
+<div class="edge-swipe-overlay"></div>
+
+
+{% block js %}
+    <script src="http://static.ikwen.com/ikwen/js/bootstrap.min.js"></script>
+    <script src="http://static.ikwen.com/ikwen/hammerjs/hammer.min.js"></script>
+    <script src="http://static.ikwen.com/ikwen/hammerjs/jquery.hammer.js"></script>
+    <script src="http://static.ikwen.com/ikwen/js/ikwen-util.js"></script>
+
+    <script>
+        (function () {
+            $('form#lang a').click(function () {
+                var lang = $(this).data('val');
+                $('form#lang input[name=language]').val(lang);
+                $('form#lang').submit();
+                return false
+            });
+
+            $('#nav-xs').on('click', '.show-search', function () {
+                $('#navbar-search').prependTo('body').fadeIn().find('input').focus();
+            });
+            $('#navbar-search').on('click', '.hide-search', function () {
+                $('#navbar-search').fadeOut();
+                $(this).val("");
+                $('#search-results').fadeOut()
+            });
+            if ($(window).width() < 992) {
+                $('.edge-panel-left').addClass('has-shade').appendTo('.edge-swipe-overlay')
+            }
+            $(window).resize(ikwen.debouncer(function (e) {
+                var winWidth = $(window).width();
+                if (winWidth < 768) {
+                    if (!$('#navbar-search').is(':visible')) {
+                        $('#navbar-search').prependTo('body');
+                        $('#navbar-search input').focus();
+                    }
+                    $('.edge-panel-right').addClass('has-shade').appendTo('.edge-swipe-overlay');
+                } else if (winWidth >= 768) {
+                    $('#navbar-search').insertBefore('#site-menu');
+                    $('.edge-panel-right').css('margin-right', 0).removeClass('has-shade').appendTo('.edge-panel-right-container').show();
+                }
+                if (winWidth >= 992) {
+                    $('.edge-panel-left').css('margin-left', 0).removeClass('has-shade').appendTo('.edge-panel-left-container').show();
+                } else {
+                    $('.edge-panel-left').addClass('has-shade').appendTo('.edge-swipe-overlay');
+                }
+            }));
+
+            $(window).on("scroll", function () {
+                if ($(window).scrollTop() > 150) {
+                    $(".navbar").addClass("active");
+                    $("#navbar-search").addClass("active");
+
+                } else {
+                    //remove the background property so it comes transparent again (defined in your css)
+                    $(".navbar").removeClass("active");
+                    $("#navbar-search").removeClass("active");
+                }
+            });
+
+            $('.js-scrollTo').on('click', function () {
+                var page = $(this).attr('href');
+                var speed = 750;
+                $('html, body').animate({ scrollTop: $(page).offset().top }, speed);
+                return false;
+            });
+
+
+            var searchDescriptor = [{
+                endpoint: 'http://www.ikwen.com/list_projects',
+                resultTplSelector: '#navbar-results .ik-li',
+                jsonp: true
+            }];
+            $('form#search input').focusout(function () { $('#navbar-results').fadeOut() });
+            ikwen.setupSearch('#search input', '#navbar-results', searchDescriptor);
+        })()
+    </script>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
