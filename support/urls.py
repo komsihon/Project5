@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, url
 from django.contrib import admin
+
 from support.views import Home, TopicDetail, Search, TopicList, submit_review
 
 admin.autodiscover()

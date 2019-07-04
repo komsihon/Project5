@@ -5,10 +5,10 @@ from ikwen.flatpages.views import FlatPageView
 from support.views import Home, Search, TopicDetail, AdminHome, submit_review, TopicList, get_media, delete_photo
 
 admin.autodiscover()
-
 urlpatterns = patterns(
     '',
     url(r'^$', Home.as_view(), name='home'),
+    url(r'^faq/', include('faq.urls')),
     url(r'^ikwen/', include('ikwen.core.urls', namespace='ikwen')),
     url(r'^search/$', Search.as_view(), name='search'),
     url(r'^yommax/$', AdminHome.as_view(), name='admin_home'),

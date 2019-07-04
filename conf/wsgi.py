@@ -7,9 +7,10 @@ For more information on this file, see
 https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 """
 
-import os, sys
+import os
+import sys
 
-sys.path.append('/home/roddy/PycharmProjects/IkwenTuto')
+sys.path.append('/home/roddy/Dropbox/PycharmProjects/ikwenSupport/')
 from conf import monitor
 
 monitor.start(interval=1.0)

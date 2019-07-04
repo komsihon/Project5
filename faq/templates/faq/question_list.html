@@ -1,0 +1,81 @@
+{% extends 'faq/topic.html' %}
+{% load i18n staticfiles auth_tokens static %}
+{#{% load startswith %}#}
+{% block page_title %}
+    <title> ikwen FAQ</title>
+{% endblock %}
+{% block response_header %}{% endblock %}
+{% block response_core %}
+    <div style="margin-bottom:10vh">
+        <div style="margin-bottom: 6vh;">
+            <h3 style="color:#32373b;" >
+                {% trans "Searching FAQ for" %} '{{ queried_question }}'
+            </h3>
+        </div>
+        <ul style="list-style: none;padding:0">
+            {% if category_list|length > 0 %}
+                {% for category in category_list %}
+                    <li><h4 style="margin-top:30px"><a href="{% url 'general' %}" style="text-decoration: none;color:#233682;">
+                        {% for word in category.name.split %}
+                            {% if queried_question|lower in word|lower %}
+                                <strong style="color: #000;">
+                                    {{ word }}
+                                </strong>
+                            {% else %}
+                                {{ word }}
+                            {% endif %}
+                        {% endfor %}
+                    </a></h4></li>
+                {% endfor %}
+            {% endif %}
+            {% if question_list|length > 0 %}
+                {% for question in question_list %}
+                    <li style=""><h4 style="margin-top:30px"><a href="{% url 'topic' app_slug=question.topic.category.app.slug category_slug=question.topic.category.slug question_slug=question.slug %}" style="text-decoration: none;color:#233682;">
+                    {% for word in question.text.split %}
+                        {% if queried_question|lower in word|lower %}
+                            <strong style="color: #000;">
+                                {{ word }}
+                            </strong>
+                        {% else %}
+                            {{ word }}
+                        {% endif %}
+                    {% endfor %}
+                    </a></h4></li>
+                 {% endfor %}
+            {% endif %}
+            {% if topic_list|length > 0 %}
+                {% for topic in topic_list %}
+                    <li ><h4 style="margin-top:30px"><a style="text-decoration:none;color:#233682;" href="{% url 'topic' app_slug=topic.category.app.slug category_slug=topic.category.slug question_slug=topic.question.slug %}">
+                        {% for word in topic.question.text.split %}
+                            {% if queried_question|lower in word|lower %}
+                                <strong style="color: #000;">{{ word }}</strong>
+                            {% else %}
+                                {{ word }}
+                            {% endif %}
+                        {% endfor %}
+                    </a></h4></li>
+                    <li style=""><h5><a style="text-decoration: none;color:rgba(61,61,61,0.91)" href="{% url 'topic' app_slug=topic.category.app.slug category_slug=topic.category.slug question_slug=topic.question.slug %}">
+                    {% for sentence in topic.sentence_with_keyword %}
+                        {% for word in sentence.split %}
+                            {% if queried_question|lower in word|lower %}
+                                <strong style="color: #000;">
+                                    {{ word }}
+                                </strong>
+                            {% else %}
+                                {{ word }}
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                    </a></h5></li>
+                {% endfor %}
+            {% elif question_list|length == 0 and category_list|length == 0 %}
+                     <h4 style="color: rgba(18,18,18,0.98);">{% trans "No result found" %}</h4>{% trans "Please check your spelling or try another term." %}
+            {% endif %}
+
+        </ul>
+    </div>
+{% endblock %}
+{% block js-core %}
+    {% block accordion %}{% endblock %}
+    {% block customjs-pagecode %}{% endblock %}
+{% endblock %}

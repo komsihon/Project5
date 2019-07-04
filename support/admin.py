@@ -33,8 +33,8 @@ class TopicAdmin(admin.ModelAdmin):
 
 
 admin.site.unregister(Invoice)
-admin.site.unregister(Product)
-admin.site.unregister(Subscription)
+# admin.site.unregister(Product)
+# admin.site.unregister(Subscription)
 # admin.site.unregister(PaymentMean)
 # admin.site.unregister(MoMoTransaction)
 # admin.site.unregister(Payment)
