@@ -1,5 +1,5 @@
 from django.db import models
-from ikwen.core.models import Application
+from ikwen.core.models import Application, Model
 from ikwen.accesscontrol.models import Member
 from django.template.defaultfilters import slugify
 LANGUAGES = (
@@ -8,7 +8,7 @@ LANGUAGES = (
     )
 
 
-class Question(models.Model):
+class Question(Model):
     text = models.CharField(max_length=200, null=True, blank=True)
     slug = models.SlugField(max_length=150, blank=False, unique=True)
     language = models.CharField(max_length=2, choices=LANGUAGES)
@@ -23,12 +23,13 @@ class Question(models.Model):
         return self.text
 
 
-class Category(models.Model):
+class Category(Model):
     name = models.CharField(max_length=100, null=False, blank=True)  # type: unicode
     app = models.ForeignKey(Application)
     slug = models.SlugField(max_length=250, blank=False, unique=True)
     language = models.CharField(max_length=2, choices=LANGUAGES)
     translated_versions = models.ForeignKey('self', null=True, blank=True)
+    order_of_appearance = models.IntegerField(default=0)
 
     def __unicode__(self):
         return self.name
@@ -39,7 +40,10 @@ class Category(models.Model):
         super(Category, self).save()
 
 
-class Topic(models.Model):
+class Topic(Model):
+    """
+    doc
+    """
     question = models.OneToOneField(Question, null=False, blank=True)
     slug = models.SlugField(max_length=240, blank=False, unique=True)
     answer = models.TextField()
@@ -50,7 +54,7 @@ class Topic(models.Model):
     count_helpless = models.IntegerField(default=0)
     author = models.ForeignKey(Member)
     language = models.CharField(max_length=2, choices=LANGUAGES)
-    translate_versions = models.ForeignKey('self', null=True, blank=True)
+    translated_versions = models.ForeignKey('self', null=True, blank=True)
 
     def __unicode__(self):
         return self.slug

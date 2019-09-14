@@ -15,7 +15,7 @@
         <ul style="list-style: none;padding:0">
             {% if category_list|length > 0 %}
                 {% for category in category_list %}
-                    <li><h4 style="margin-top:30px"><a href="{% url 'general' %}" style="text-decoration: none;color:#233682;">
+                    <li><h4 style="margin-top:30px"><a href="{% url 'app_categories_list' category.app.slug %}" style="text-decoration: none;color:#233682;">
                         {% for word in category.name.split %}
                             {% if queried_question|lower in word|lower %}
                                 <strong style="color: #000;">
@@ -30,7 +30,7 @@
             {% endif %}
             {% if question_list|length > 0 %}
                 {% for question in question_list %}
-                    <li style=""><h4 style="margin-top:30px"><a href="{% url 'topic' app_slug=question.topic.category.app.slug category_slug=question.topic.category.slug question_slug=question.slug %}" style="text-decoration: none;color:#233682;">
+                    <li style=""><h4 style="margin-top:30px"><a href="{% url 'topic_detail' app_slug=question.topic.category.app.slug category_slug=question.topic.category.slug question_slug=question.slug %}" style="text-decoration: none;color:#233682;">
                     {% for word in question.text.split %}
                         {% if queried_question|lower in word|lower %}
                             <strong style="color: #000;">
@@ -45,7 +45,7 @@
             {% endif %}
             {% if topic_list|length > 0 %}
                 {% for topic in topic_list %}
-                    <li ><h4 style="margin-top:30px"><a style="text-decoration:none;color:#233682;" href="{% url 'topic' app_slug=topic.category.app.slug category_slug=topic.category.slug question_slug=topic.question.slug %}">
+                    <li ><h4 style="margin-top:30px"><a style="text-decoration:none;color:#233682;" href="{% url 'topic_detail' app_slug=topic.category.app.slug category_slug=topic.category.slug question_slug=topic.question.slug %}">
                         {% for word in topic.question.text.split %}
                             {% if queried_question|lower in word|lower %}
                                 <strong style="color: #000;">{{ word }}</strong>
@@ -54,7 +54,7 @@
                             {% endif %}
                         {% endfor %}
                     </a></h4></li>
-                    <li style=""><h5><a style="text-decoration: none;color:rgba(61,61,61,0.91)" href="{% url 'topic' app_slug=topic.category.app.slug category_slug=topic.category.slug question_slug=topic.question.slug %}">
+                    <li style=""><h5><a style="text-decoration: none;color:rgba(61,61,61,0.91)" href="{% url 'topic_detail' app_slug=topic.category.app.slug category_slug=topic.category.slug question_slug=topic.question.slug %}">
                     {% for sentence in topic.sentence_with_keyword %}
                         {% for word in sentence.split %}
                             {% if queried_question|lower in word|lower %}
@@ -74,8 +74,24 @@
 
         </ul>
     </div>
+    <div>
+        <div class="mb-lg-auto mb-5 col-lg-9 col-sm-6 col-md-7 col-md-offset-2 col-sm-offset-3">
+{#            style="float: none; margin: 30vh auto; width: 80%;"#}
+            <a href="{% url 'faqhome' %}" class="go-home">
+                {% trans 'Go back home' %}
+            </a>
+        </div>
+    </div>
+
 {% endblock %}
+
 {% block js-core %}
     {% block accordion %}{% endblock %}
-    {% block customjs-pagecode %}{% endblock %}
+    {% block customjs-pagecode %}
+        <script>
+            $(function () {
+                $('div#opinion').parent().hide();
+            })
+        </script>
+    {% endblock %}
 {% endblock %}

@@ -1,9 +1,8 @@
-{% extends 'faq/general_faq.html' %}
+{% extends 'faq/app_categories.html' %}
 {% load i18n staticfiles auth_tokens static %}
 {% block page_title %}
     <title> ikwen FAQ-{{ app.name }} </title>
 {% endblock %}
-
 {% block body-page %}
     <div class="topic-body">
         <div class="container topic">
@@ -11,68 +10,69 @@
                 <div>
                     {% block response_header %}
                         <span>
-                            <a href="{% url 'general' %}">{{ app.name }}</a>&nbsp;&nbsp;&nbsp;&#8594;&nbsp;&nbsp;&nbsp;<a href="{% url 'general' %}">{{ category.name }}</a>
+                            <a href="{% url 'app_categories_list' app.slug %}">{{ app.name }}</a>&nbsp;&nbsp;&nbsp;&#8594;&nbsp;&nbsp;&nbsp;<a href="{% url 'app_categories_list' app.slug %}">{{ category.name }}</a>
+{#                            <a href="{% url 'app_categories_list' app.slug %}">{{ app.name }}</a>&nbsp;&nbsp;&nbsp;&#8594;&nbsp;&nbsp;&nbsp;<a href="{% url 'app_categories_list' app.slug %}">{{ category.name }}</a>#}
                         </span>
                         <hr>
                     {% endblock %}
 
                 </div>
+
                 <div style="display: block">
-{#                container-fluid#}
-                  <div class=" col-lg-9" style="margin: 2vh auto auto;float: none!important;">
-                    {% block response_core %}
-                        <div>
-                             <div id="opinion">
-                                    {% with topic.count_helpful as approvements %}
-                                        {% if approvements > 1 %}
-                                            {{ approvements }} {% trans " people approved" %}
-                                        {% elif approvements == 0 or approvements == null %}
-                                            {% trans "Be the first to approve" %}
+                    <div class="header-opinion">
+                        <div id="opinion">
+                            {% with topic.count_helpful as approvements %}
+                                {% if approvements > 1 %}
+                                    {{ approvements }} {% trans " people approved" %}
+                                {% elif approvements == 0 or approvements == null %}
+                                    {% trans "Be the first to approve" %}
+                                {% else %}
+                                    {{ approvements }}{% trans " person approved" %}
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    <div class=" col-lg-9" style="margin: 2vh auto auto;float: none!important;">
+                        {% block response_core %}
+                            <div>
+                                <h3>{{ question.text }}</h3>
+                                <span class="topic-answer">
+                                    <p onblur="$(this).html({{ topic.answer_with_html_tags }})" onload="$(this).html({{ topic.answer_with_html_tags }})">
+                                        {% if topic.answer_with_html_tags %}
+                                            {{ topic.answer_with_html_tags|safe }}
                                         {% else %}
-                                                {{ approvements }}{% trans " person approved" %}
+                                            {{ topic.answer|safe }}
                                         {% endif %}
-                                    {% endwith %}
-                             </div>
-                            <h3>{{ question.text }}</h3>
-                            <span class="topic-answer">
-                                <p>
-                                    {% if topic.answer_with_html_tags %}
-                                        {{ topic.answer_with_html_tags | safe }}
-                                    {% else %}
-                                        {{ topic.answer }}
-                                    {% endif %}
-                                </p>
-                            </span>
-                        <span>{{ current_lang }}<br></span>
-                        <span>{{ prev_lang }}<br></span>
-{#                        <span>{{ category }}<br></span>#}
-{#                        <span>{{ question }}<br></span>#}
-                        </div>
-                        <div style="margin-bottom: 6vh;">
-                            <hr>
-                            <div class="feedback">
-                                {% trans "Was this article helpful?" %}
-                                <div class="feedback-action">
-                                    <a href="javascript:;" class="mark-helpful button-feedback" >
-                                            {% trans "YES" %}
-                                    </a>
-                                    <a href="javascript:;" class="mark-helpless button-feedback">
-                                            {% trans "NO" %}
-                                    </a>
-                                </div>
+                                    </p>
+                                </span>
+                                <span>{{ current_lang }}<br></span>
+                                <span>{{ prev_lang }}<br></span>
                             </div>
-                            <hr>
-                        </div>
-                        <div style="text-align:center">
+                            <div style="margin-bottom: 6vh;">
+                                <hr>
+                                <div class="feedback">
+                                    {% trans "Was this article helpful?" %}
+                                    <div class="feedback-action">
+                                        <a href="javascript:;" class="mark-helpful button-feedback" >
+                                                {% trans "YES" %}
+                                        </a>
+                                        <a href="javascript:;" class="mark-helpless button-feedback">
+                                                {% trans "NO" %}
+                                        </a>
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                            <div style="text-align:center">
                                 <div class="faq-home-button">
                                     <a href="{% url 'faqhome' %}" class="return-faq-home">
                                             {% trans "FAQ HOME" %}
                                     </a>
                                 </div>
-                        </div>
-                        <div id="error-message" style="visibility: hidden;color:red">{% trans "Please reload" %}</div>
-                    {% endblock %}
-                  </div>
+                            </div>
+                            <div id="error-message" style="visibility: hidden;color:red">{% trans "Please reload" %}</div>
+                        {% endblock %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -84,10 +84,11 @@
 {% block customjs-pagecode %}
     <script>
         $(function () {
-            var endpoint = "{% url 'user_feedback' %}",
+
+            let endpoint = "{% url 'save_user_feedback' %}",
                 count_helpful = 0 , count_helpless = 0;
             $('form#lang-selector').submit(function () {
-                var address = "{% url 'topic' app_slug=category.app.slug category_slug=category.slug question_slug=topic.question.slug %}";
+                var address = "{% url 'topic_detail' app_slug=category.app.slug category_slug=category.slug question_slug=topic.question.slug %}";
                $(this).append("<a hidden='hidden' href=address></a>");
             });
             $(".mark-helpful").click(function () {
@@ -108,7 +109,8 @@
                           if (data.count_helpful > 1)
                               $('#opinion').text(data.count_helpful+ "{% trans ' people approved' %}");
                           else
-                              $('#opinion').text(data.count_helpful+ "{% trans ' You '\/'re the first to have approved' %}");
+                              if ( data.count_helpful === 1 )
+                                $('#opinion').text("{% trans "You're the first to have approved" %}");
                     }
 
                 });

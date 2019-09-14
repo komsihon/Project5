@@ -1,6 +1,10 @@
 {% extends 'core/base_bs.html' %}
-{% load i18n static humanize user_agents auth_tokens media_from_provider currency cache %}
-{% load user_agents %}
+{% load i18n static humanize auth_tokens user_agents %}
+
+{% block page_title %}
+    <title>{{ app_name }} - {% trans 'FAQ' %}</title>
+{% endblock %}
+
 {% block head_style %}
     {{ block.super }}
     {% block meta %}
@@ -17,25 +21,22 @@
     {% endblock %}
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
     <!-- Custom css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'faq/css/faq.css' %}">
-    <link rel="icon" type="image/jpg" href="{% static 'faq/img/ikwen_kernel_logo.png' %}">
+    {% block custom-css %}
+        <link rel="stylesheet" type="text/css" href="{% static 'faq/css/faq.css' %}">
+        <link rel="icon" type="image/jpg" href="{% static 'faq/img/ikwen_kernel_logo.png' %}">
+    {% endblock %}
 {% endblock %}
-{% block page_title %}
-    <title>ikwen FAQ-general</title>
-{% endblock %}
-{% block head_js %}
-    {{ block.super }}
-    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
-{% endblock %}
+
 {% block content %}
     {% block banner %}
-        <div class="query-section" style="background:#7490c0">
+        <div class="query-section">
             <div class="container question-search3 form-group" >
                 <form role="form" class="horizontal-form" action="{% url 'question_list' %}"  name="formQuestion" id="form-question">
-{#                    autocomplete="off"#}
                     <div class="question-guide">
                         <p class="col-12">
-                            <h2>{% trans "How can we help you?" %}</h2>
+                            <h2>
+                                {% trans "How can we help you ?" %}
+                            </h2>
                         </p>
                     </div>
                     <div id="input">
@@ -45,7 +46,10 @@
                         </div>
                     </div>
                     <div class="browsing-guide" >
-                        <p class="col-4"><h4>{% trans "You can also browse the topics to find what you are looking for" %}</h4>
+                        <p class="col-4">
+                            <h4>
+                                {% trans "You can also browse the topics to find what you are looking for" %}
+                            </h4>
                         </p>
                     </div>
                 </form>
@@ -72,14 +76,14 @@
                                 {% for topic in category.topic_set.all %}
                                     <li>
                                         <span>
-                                            <a href="{% url 'topic' app_slug=category.app.slug category_slug=category.slug question_slug=topic.question.slug %}" class="question-of-category">
+                                            <a href="{% url 'topic_detail' app_slug=category.app.slug category_slug=category.slug question_slug=topic.question.slug %}" class="question-of-category">
                                                 {% if request|is_mobile %}
-                                                    {{ topic.get_question_text|truncatechars:30 }}
+                                                    {{ topic.get_question_text|truncatechars:22 }}
                                                 {% else %}
                                                     {% if request|is_tablet %}
                                                         {{ topic.get_question_text|truncatechars:52 }}
                                                     {% elif request|is_pc %}
-                                                        {{ topic.get_question_text|truncatechars:76 }}
+                                                        {{ topic.get_question_text|truncatechars:74 }}
                                                     {% endif %}
                                                 {% endif %}
                                             </a>
@@ -91,67 +95,74 @@
                         </div>
                       </div>
                     {% endfor %}
+                    <div class="mb-lg-auto mb-5 col-sm-6 col-sm-offset-3">
+                        <a href="{% url 'faqhome' %}" class="go-home">
+                            {% trans 'Go back home' %}
+                        </a>
+                    </div>
                 </div>
             </div>
+
         </div>
-{#        <div>#}
-{#            {{ question_list }}<br>#}
-{#            {{ question_list2 }}<br>#}
-{##}
-{#        </div>#}
     {% endblock %}
 <!-- Card -->
+{#    <div>#}
+{#        {% for q in question_list %}{{ q }}{% endfor %}#}
+{#    </div>#}
+
 {% endblock %}
 {% block footer %}
  <footer class="footer">
      <div class="container">
          <div class="row footer-core" >
-             <div class="col-sm-3" id="company-info">
-                 <a href="http://www.ikwen.com">
-                     <img class="footer-mobile-adjust" src="{% static 'faq/img/New logo ikwen without slogan (niveau de blanc)-01.png' %}" style="max-width: 7vw;">
-                     <h4  class="logo footer-mobile-adjust" id="company-info-name">
-                         ikwen</h4>
-                 </a>
-             </div>
-             <div class="col-sm-3 col-xs-4 footer-mobile-adjust">
+{#             <div class="col-sm-3" id="company-info">#}
+{#                 <a href="http://www.ikwen.com">#}
+{#                     <img class="footer-mobile-adjust" src="{% static 'faq/img/New logo ikwen without slogan (niveau de blanc)-01.png' %}" style="max-width: 7vw;">#}
+{#                     <h4  class="logo footer-mobile-adjust" id="company-info-name">#}
+{#                         ikwen</h4>#}
+{#                 </a>#}
+{#             </div>#}
+             <div class="col-sm-4 col-xs-4 footer-mobile-adjust">
                  <h5 class="h5-footer-core">{% trans "Get started" %}</h5>
-                 <ul class="unordered-footer-lists">
+                 <ul class="footer-links-group">
                      <li><a class="footer-links" href="http://www.ikwen.com">{% trans "Home" %}</a></li>
                      <li><a class="footer-links" href="http://www.ikwen.com/signIn" target="_blank">{% trans "Sign In" %}</a></li>
+                     <li>
+                         <form action="{% url 'set_language' %}" method="post" id="lang-selector">{% csrf_token %}
+                             {% get_available_languages as LANGUAGES %}
+                             {% get_current_language as LANGUAGE_CODE %}
+                                 <label for="language" class="sr-only">Language:</label>
+                                 <select class="lang-switcher" style="background: #233682; border-color: #fff; color:#fff" name="language" onfocus="$(this).children('option').css({'background-color':'#ffffff','color':'#1d3321'})" onchange="$(this).parents('form').submit()">
+                                     {% for lang in LANGUAGES %}
+                                        <option onblur="$(this).parent().blur()" value="{{ lang.0 }}"{% if lang.0 == LANGUAGE_CODE %} selected  {% endif %}>
+                                            <span>{{ lang.0|upper }}</span>
+                                        </option>
+                                     {% endfor %}
+                                 </select>
+                         </form>
+                     </li>
                  </ul>
              </div>
-             <div class="col-sm-3 col-xs-4 footer-mobile-adjust">
+             <div class="col-sm-4 col-xs-4 footer-mobile-adjust">
                  <h5 class="h5-footer-core">{% trans "About us" %}</h5>
-                 <ul class="unordered-footer-lists">
+                 <ul class="footer-links-group">
                      <li><a class="footer-links" href="http://www.ikwen.com/about" target="_blank">{% trans "Our Company" %}</a></li>
                      <li><a class="footer-links" href="#" target="_blank">{% trans "Reviews" %}</a></li>
                  </ul>
              </div>
-             <div class="col-sm-3 col-xs-4 footer-mobile-adjust">
+             <div class="col-sm-4 col-xs-4 footer-mobile-adjust">
                  <h5 class="h5-footer-core">{% trans "Support" %}</h5>
-                 <ul class="unordered-footer-lists">
-                     <li><a class="footer-links"href="http://blog.ikwen.com/" target="_blank">{% trans "Blog" %}</a></li>
+                 <ul class="footer-links-group">
+                     <li><a class="footer-links" href="{% url 'faqhome' %}" target="_blank">{% trans "FAQ" %}</a></li>
+                     <li><a class="footer-links" href="http://blog.ikwen.com/" target="_blank">{% trans "Blog" %}</a></li>
                      <li><a class="footer-links" href="http://support.ikwen.com/" target="_blank">{% trans "Help desk" %}</a></li>
                  </ul>
              </div>
-             <div class="col-sm-3 col-xs-4 footer-mobile-adjust" >
-                 <form action="{% url 'set_language' %}" method="post" id="lang-selector">{% csrf_token %}
-                     {% get_available_languages as LANGUAGES %}
-                     {% get_current_language as LANGUAGE_CODE %}
-                         <label for="language" class="sr-only">Language:</label>
-                         <select class="lang-switcher" style="background: #233682; border-color: #fff; color:#fff" name="language" onfocus="$(this).children('option').css({'background-color':'#ffffff','color':'#1d3321'})" onchange="$(this).parents('form').submit()">
-                             {% for lang in LANGUAGES %}
-                                <option onblur="$(this).parent().blur()" value="{{ lang.0 }}"{% if lang.0 == LANGUAGE_CODE %} selected  {% endif %}>
-                                    <span>{{ lang.0|upper }}</span>
-                                </option>
-                             {% endfor %}
-                         </select>
-                 </form>
-             </div>
+
          </div>
      </div>
      <div class="footer-copyright mobile-adjust ">
-         © 2019 <a class="company-name" href="http://www.ikwen.com"><strong class="copy-right-name">ikwen</strong></a>.
+         © 2019 <a class="company-name" href="http://www.ikwen.com"><strong class="copy-right-name">ikwen</strong></a>
      </div>
  </footer>
 
@@ -164,58 +175,24 @@
 {% block js %}
     {{ block.super }}
 
-{#    <script type="text/javascript" src="http://static.ikwen.com/ikwen/js/jquery-1.12.4.min.js"></script>#}
-{#    <script type="text/javascript" src="http://static.ikwen.com/ikwen/js/jquery.autocomplete.min.js"></script>#}
-{#    <script type="text/javascript" src="http://static.ikwen.com/ikwen/js/jquery-ui.js"></script>#}
     <script type="text/javascript" src="{% static 'ikwen/js/jquery.autocomplete.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'ikwen/js/jquery-1.12.4.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'ikwen/js/jquery-ui.js' %}"></script>
     {% block js-core %}
     <script>
-        /*(function ( $, undefined ) {
-           $.widget( "ab.autocomplete", $.ui.autocomplete, {
-               _renderMenu: function ( ul, items ) {
-                   var that = this,
-                       currentContent = "";
-                   $.each( items, function ( index, item ) {
-                       if ( item.content !== currentContent ) {
-                           that._renderContent( ul, item );
-                           currentContent = item.content;
-                       }
-                       that._renderItemData( ul, item );
-                   });
-               },
-               _renderContent: function ( ul, item ) {
-                   return $( "<li>" ).addClass( "ui-autocomplete-content" )
-                           .html( item.label )
-                       .appendTo( ul );
-                       {#.append( $( "<span>" ).html( item. ) )#}
-               },
-               _renderItem: function ( ul, item ) {
-                   return $( "<li>" ).addClass( "ui-autocomplete-item" )
-                       .append( $( "<a>" )
-                           .append( $( "<span>" ).html( item.label ) ) )
-                       .appendTo( ul );
-               }
-           });
-       })(jQuery);*/
         $(function () {
+            $('body').find('.navbar-default .navbar-brand').css({'margin-left': '0!important',
+                'max-width': '125px!important',
+                'overflow': 'hidden!important;'});
+
             $("#question").change(function () {
                 var q = $(this).val(),
                     autocomplete_infos,
-                    endpoint = "{% url 'autocomplete_infos' %}",
+                    endpoint = "{% url 'autocomplete_user_research' %}",
                     params = {
                     format: 'json',
                     q:q
                 } , items = [];
-                /*
-                function split(val) {
-                    return val.split(/,\s*|/);
-                }
-                function extractLast ( term ) {
-                    return split( term ).pop();
-                }
-                */
 
                 $.getJSON(endpoint,params,function (data,status,jqXHR) {
                    if (data.success) {
@@ -286,15 +263,7 @@
                                .appendTo( ul );
                        };
                    }
-                });/*.data( "ui-autocomplete" )._renderItem = function(ul, item) {
-                       return $("<li>")
-                           .data( "item.autocomplete", item )
-                           .append( "<a>"+ item.label + "</a>" )
-                           .appendTo( ul );
-            };*/
-                       /*.focus(function (event) {
-                           $(this).autocomplete("search", "");
-                       });});*/
+                });
             });
         })
     </script>

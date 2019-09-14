@@ -10,7 +10,7 @@ https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
 import os
 import sys
 
-sys.path.append('/home/roddy/Dropbox/PycharmProjects/ikwenSupport/')
+sys.path.append('/home/silatchom/Dropbox/PycharmProjects/ikwenSupport/')
 from conf import monitor
 
 monitor.start(interval=1.0)

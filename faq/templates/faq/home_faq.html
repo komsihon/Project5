@@ -1,6 +1,5 @@
-{% extends 'faq/general_faq.html' %}
-{% load i18n staticfiles auth_tokens static %}
-{% load user_agents %}
+{% extends 'faq/app_categories.html' %}
+{% load i18n staticfiles auth_tokens static user_agents %}
 {% block page_title %}
     <title> ikwen FAQ </title>
 {% endblock %}
@@ -16,43 +15,50 @@
         </div>
         <div class="row">
             {% for app in app_list %}
-                    <div class="col-md-6">
-                        <a class="img-link" href="{% url 'general' %}">
-                            <h4>
-                                <img class="picture-features" src="{{ app.logo.url }}">
-                                    {{ app.name.split|first }}
-                            </h4>
-                        </a>
-                        <div>
-                            <p class="paragraph">
-                                <ol class="ordered-list-style">
-                                    {% for topic in app.topic_list %}
-                                        {% if forloop.counter  <= 5 %}
-                                            <li>
-                                                <a id="ques" href="{% url 'topic' app_slug=app.slug category_slug=topic.category.slug question_slug=topic.question.slug %}">
-                                                {% if request|is_mobile %}
-                                                    {{ topic.get_question_text|truncatechars:30 }}
-                                                {% else %}
-                                                    {% if request|is_tablet %}
-                                                        {{ topic.get_question_text|truncatechars:52 }}
-                                                    {% elif request|is_pc %}
-                                                        {{ topic.get_question_text|truncatechars:76 }}
-                                                    {% endif %}
+                <div class="col-md-6 app-card">
+                    <a class="img-link" href="{% url 'app_categories_list' app.slug %}">
+                        <h4>
+                            <img class="picture-features" src="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}">
+                                {{ app.name.split|first }}
+                        </h4>
+                    </a>
+                    <div>
+                        <p class="paragraph">
+                            <ol class="ordered-list-style">
+                                {% for topic in app.topic_list %}
+                                    {% if forloop.counter  <= 5 %}
+                                        <li>
+                                            <a id="question" href="{% url 'topic_detail' app_slug=app.slug category_slug=topic.category.slug question_slug=topic.question.slug %}">
+                                            {% if request|is_mobile %}
+                                                {{ topic.get_question_text|truncatechars:30 }}
+                                            {% else %}
+                                                {% if request|is_tablet %}
+                                                    {{ topic.get_question_text|truncatechars:50 }}
+                                                {% elif request|is_pc %}
+                                                    {{ topic.get_question_text|truncatechars:65 }}
                                                 {% endif %}
-                                                </a>
-                                            </li>
-                                        {% endif %}
-                                    {% endfor %}
-                                    <li><a href="{% url 'general'  %}" class="parent-link-full-display"><span class="link-full-display">{% trans 'View all questions' %}</span></a></li>
-                                </ol>
-                            </p>
-                        </div>
+                                            {% endif %}
+                                            </a>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                                <li><a href="{% url 'app_categories_list' app.slug %}" class="parent-link-full-display"><span class="link-full-display">{% trans 'View all questions' %}</span></a></li>
+                            </ol>
+                        </p>
                     </div>
+                </div>
             {% endfor %}
         </div>
     </div>
 </div>
-
+{#<div>#}
+{#    {% for q in question_to_remove %}#}
+{#        {{ q }}#}
+{#    {% endfor %}#}
+{#    {% for t in topic_to_remove %}#}
+{#        {{ t }}#}
+{#    {% endfor %}#}
+{#</div>#}
 {% endblock %}
 
 

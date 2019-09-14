@@ -6,7 +6,7 @@ from django.utils.translation import get_language
 from django.views.i18n import set_language
 from django.views.generic import TemplateView
 from ikwen.core.utils import to_dict
-from faq.models import *
+from faq.models import Topic, Category, Application, Question
 from django.shortcuts import render
 from forms import *
 
@@ -26,12 +26,12 @@ def sentence_with_keyword(paragraph, keyword_word):
     return sentence_list
 
 
-class HomeView(TemplateView):
+class Home(TemplateView):
     template_name = 'faq/home_faq.html'
 
     def get_context_data(self, **kwargs):
         language = get_language()
-        context = super(HomeView, self).get_context_data(**kwargs)
+        context = super(Home, self).get_context_data(**kwargs)
         app_list = []
         for app in Application.objects.all().order_by('name'):
             category_list = list(Category.objects.filter(app=app))
@@ -41,14 +41,18 @@ class HomeView(TemplateView):
                 app_list.append(app)
 
         context['app_list'] = app_list
+        # context['question_to_remove'] = [question for question in Question.objects.all() if
+        #                                  question not in [t.question for t in Topic.objects.all()]]
+        # context['topic_to_remove'] = [topic for topic in Topic.objects.all() if topic.question not in Question.objects.all()]
+
         return context
 
 
-class TopicView(TemplateView):
+class TopicDetails(TemplateView):
     template_name = 'faq/topic.html'
 
     def get_context_data(self, **kwargs):
-        context = super(TopicView, self).get_context_data()
+        context = super(TopicDetails, self).get_context_data()
         app_slug = kwargs['app_slug']
         category_slug = kwargs['category_slug']
         question_slug = kwargs['question_slug']
@@ -56,33 +60,43 @@ class TopicView(TemplateView):
         category = Category.objects.get(slug=category_slug)
         app = Application.objects.get(slug=app_slug)
         current_language = get_language()
-        prev_lang = question.language
+        prev_lang = ''
+        if question.language.lower() != current_language:
+            prev_lang = question.language
         while category.language.lower() != current_language:
             category = category.translated_versions
 
         while question.language.lower() != current_language:
-            print question.text
             question = question.translated_versions
 
         question = Question.objects.get(slug=question.slug, language__istartswith=current_language)
-        topic = Topic.objects.filter(category=category, language__istartswith=current_language).get(question=question)
+        topic = Topic.objects.filter(language__istartswith=current_language).get(question=question)
         context['app'] = app
         context['category'] = category
         context['question'] = question
         context['topic'] = topic
-        # context['current_lang'] = current_language
-        # context['prev_lang'] = prev_lang
+
+        # if prev_lang == '':
+        #     next_url = reverse('topic_detail', kwargs={'app_slug': app_slug,
+        #                                                'category_slug': category_slug,
+        #                                                'question_slug': question_slug,
+        #                                                }
+        #                        )
+        #     return HttpResponseRedirect(next_url)
+
         return context
 
 
-class GeneralView(TemplateView):
-    template_name = 'faq/general_faq.html'
+class ApplicationCategoriesList(TemplateView):
+    template_name = 'faq/app_categories.html'
 
     def get_context_data(self, **kwargs):
+        context = super(ApplicationCategoriesList, self).get_context_data()
+        app_slug = kwargs['app_slug']
         language = get_language()
-        context = super(GeneralView, self).get_context_data()
         category_list = []
-        for category in Category.objects.filter(language__istartswith=language).order_by('name'):
+        app = Application.objects.get(slug=app_slug)
+        for category in Category.objects.filter(language__istartswith=language, app=app).order_by('name'):
             topic_list = []
             for topic in Topic.objects.filter(category=category, language__istartswith=language):
                 topic_list.append(topic)
@@ -96,9 +110,11 @@ class GeneralView(TemplateView):
         # question_list2 = []
         # for q in Question.objects.exclude(language__istartswith='en').exclude(language__istartswith='fr'):
         #     question_list2.append(q)
+        # topic_list = [q for q in Topic.objects.filter(translated_versions__isnull=True)]
         context['category_list'] = category_list
+        context['app_name'] = Application.objects.get(slug=app_slug).name.lower().split()[0]
+        # context['topic_list'] = topic_list
         # context['question_list'] = question_list
-        # context['question_list2'] = question_list2
         return context
 
     # def post
@@ -134,7 +150,7 @@ class QuestionList(TemplateView):
         return context
 
 
-def user_feedback(request, *args, **kwargs):
+def save_user_feedback(request, *args, **kwargs):
     language = get_language()
     q = request.GET
     topic = q.get('topic')
@@ -149,10 +165,11 @@ def user_feedback(request, *args, **kwargs):
         matched_topic.count_helpless += int(count_helpless)
     matched_topic.save()
     response = "Successfully receive the request"
-    return HttpResponse(json.dumps({'success': True, 'count_helpful': matched_topic.count_helpful}), 'content-type: text/json')
+    return HttpResponse(json.dumps({'success': True, 'count_helpful': matched_topic.count_helpful}),
+                        'content-type: text/json')
 
 
-def autocomplete_infos(request, *args, **kwargs):
+def autocomplete_user_research(request, *args, **kwargs):
     language = get_language()
     q = request.GET['q']
     topic_list_with_keyword_in_question = []
@@ -173,3 +190,4 @@ def autocomplete_infos(request, *args, **kwargs):
                     topic_list_with_keyword_in_answer=topic_list_with_keyword_in_answer, category_list=category_list)
 
     return HttpResponse(json.dumps({'success': True, 'data': response}), 'content-type:text/json')
+
