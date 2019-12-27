@@ -5,6 +5,8 @@ from django.template import loader
 from django.utils.translation import get_language
 from django.views.i18n import set_language
 from django.views.generic import TemplateView
+
+from accesscontrol.backends import UMBRELLA
 from ikwen.core.utils import to_dict
 from faq.models import Topic, Category, Application, Question
 from django.shortcuts import render
@@ -33,7 +35,7 @@ class Home(TemplateView):
         language = get_language()
         context = super(Home, self).get_context_data(**kwargs)
         app_list = []
-        for app in Application.objects.all().order_by('name'):
+        for app in Application.objects.using(UMBRELLA).all().order_by('name'):
             category_list = list(Category.objects.filter(app=app))
             topic_list = Topic.objects.filter(category__in=category_list, language__istartswith=language)
             if topic_list.count() > 0:
@@ -58,7 +60,7 @@ class TopicDetails(TemplateView):
         question_slug = kwargs['question_slug']
         question = Question.objects.get(slug=question_slug)
         category = Category.objects.get(slug=category_slug)
-        app = Application.objects.get(slug=app_slug)
+        app = Application.objects.using(UMBRELLA).get(slug=app_slug)
         current_language = get_language()
         prev_lang = ''
         if question.language.lower() != current_language:
@@ -88,6 +90,9 @@ class TopicDetails(TemplateView):
 
 
 class ApplicationCategoriesList(TemplateView):
+    """
+    written by: Silatchom SIAKA (AI responsible)
+    """
     template_name = 'faq/app_categories.html'
 
     def get_context_data(self, **kwargs):
@@ -95,7 +100,7 @@ class ApplicationCategoriesList(TemplateView):
         app_slug = kwargs['app_slug']
         language = get_language()
         category_list = []
-        app = Application.objects.get(slug=app_slug)
+        app = Application.objects.using(UMBRELLA).get(slug=app_slug)
         for category in Category.objects.filter(language__istartswith=language, app=app).order_by('name'):
             topic_list = []
             for topic in Topic.objects.filter(category=category, language__istartswith=language):
@@ -112,7 +117,8 @@ class ApplicationCategoriesList(TemplateView):
         #     question_list2.append(q)
         # topic_list = [q for q in Topic.objects.filter(translated_versions__isnull=True)]
         context['category_list'] = category_list
-        context['app_name'] = Application.objects.get(slug=app_slug).name.lower().split()[0]
+        context['app_name'] = Application.objects.using(UMBRELLA).get(slug=app_slug).name.lower().split()[0]
+        context['app'] = app
         # context['topic_list'] = topic_list
         # context['question_list'] = question_list
         return context
@@ -121,6 +127,8 @@ class ApplicationCategoriesList(TemplateView):
 
 
 class QuestionList(TemplateView):
+    """"
+    """
     template_name = 'faq/question_list.html'
 
     def get_context_data(self, **kwargs):

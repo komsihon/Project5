@@ -35,7 +35,12 @@
                     <div class="question-guide">
                         <p class="col-12">
                             <h2>
-                                {% trans "How can we help you ?" %}
+                                {% if app.name %}
+                                    {% trans "How can we help you on " %} {{ app.name }} <img width="40" src="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}"> ?
+                                {% else %}
+                                    {% trans "How can we help you ?" %}
+                                {% endif %}
+
                             </h2>
                         </p>
                     </div>
@@ -65,7 +70,7 @@
                         <div class="panel-heading accordion-header">
                           <h4 class="mb-0 headding-style panel-title">
                             <a class="category-name" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}">
-                            {{ category.name }}
+                                {{ category.name }}
                                 <i class="fas fa-angle-right rotate-icon italic-style" aria-hidden="true"></i>
                             </a>
                           </h4>
@@ -101,27 +106,17 @@
                         </a>
                     </div>
                 </div>
+
             </div>
 
         </div>
     {% endblock %}
 <!-- Card -->
-{#    <div>#}
-{#        {% for q in question_list %}{{ q }}{% endfor %}#}
-{#    </div>#}
-
 {% endblock %}
 {% block footer %}
  <footer class="footer">
      <div class="container">
          <div class="row footer-core" >
-{#             <div class="col-sm-3" id="company-info">#}
-{#                 <a href="http://www.ikwen.com">#}
-{#                     <img class="footer-mobile-adjust" src="{% static 'faq/img/New logo ikwen without slogan (niveau de blanc)-01.png' %}" style="max-width: 7vw;">#}
-{#                     <h4  class="logo footer-mobile-adjust" id="company-info-name">#}
-{#                         ikwen</h4>#}
-{#                 </a>#}
-{#             </div>#}
              <div class="col-sm-4 col-xs-4 footer-mobile-adjust">
                  <h5 class="h5-footer-core">{% trans "Get started" %}</h5>
                  <ul class="footer-links-group">
