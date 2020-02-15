@@ -1,0 +1,151 @@
+{% extends 'faq/show_topic_list.html' %}
+{% load i18n staticfiles auth_tokens static %}
+{% block page_title %}
+    <title> ikwen FAQ - {{ app.name }} </title>
+{% endblock %}
+{% block body-page %}
+    <div class="topic-body">
+        <div class="container topic">
+            <div>
+                {% if message %}
+                    <div class="text-center" style="height: 300px; margin-top: 50px;">
+                        <h2>{{ message }}</h2>
+                    </div>
+
+                {% else %}
+                    <div>
+                        {% block response_header %}
+                            <span>
+                                <a href="{% url 'faq:show_topic_list' app.slug %}">{{ app.name }}</a>&nbsp;&nbsp;&nbsp;&#8594;&nbsp;&nbsp;&nbsp;<a href="{% url 'faq:show_topic_list' app.slug %}">{{ topic.title }}</a>
+                            </span>
+                            <hr>
+                        {% endblock %}
+
+                    </div>
+
+                    <div style="display: block">
+                        <div class="header-opinion">
+                            <div id="opinion">
+                                {% with question.count_helpful as approvements %}
+                                    {% if approvements > 1 %}
+                                        {{ approvements }} {% trans " people approved" %}
+                                    {% elif approvements == 0 or approvements == null %}
+                                        {% trans "Be the first to approve" %}
+                                    {% else %}
+                                        {{ approvements }}{% trans " person approved" %}
+                                    {% endif %}
+                                {% endwith %}
+                            </div>
+                        </div>
+                        <div class=" col-lg-9" style="margin: 2vh auto auto;float: none!important;">
+                            {% block response_core %}
+                                <div>
+                                    <h3>{{ question.label }}</h3>
+                                    <span class="topic-answer">
+                                        <p>{{ question.answer|safe }}</p>
+                                    </span>
+                                </div>
+                                <div style="margin-bottom: 6vh;">
+                                    <hr>
+                                    <div class="feedback">
+                                        {% trans "Was this article helpful?" %}
+                                        <div class="feedback-action">
+                                            <a href="javascript:;" class="mark-helpful button-feedback" >
+                                                    {% trans "YES" %}
+                                            </a>
+                                            <a href="javascript:;" class="mark-helpless button-feedback">
+                                                    {% trans "NO" %}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                </div>
+                                <div style="text-align:center">
+                                    <div class="faq-home-button">
+                                        <a href="{% url 'home' %}" class="return-faq-home">
+                                                {% trans "FAQ HOME" %}
+                                        </a>
+                                    </div>
+                                </div>
+                                <div id="error-message" style="visibility: hidden;color:red">{% trans "Please reload" %}</div>
+                            {% endblock %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+<div class="edge-swipe-overlay"></div>
+{% block customjs-pagecode %}
+    <script>
+        $(function () {
+
+            let endpoint = "{% url 'faq:save_user_feedback' %}",
+                count_helpful = 0 , count_helpless = 0;
+            $('form#lang-selector').submit(function () {
+                    var address = "{% url 'faq:question_detail' topic.app.slug topic.slug question.slug %}";
+               $(this).append("<a hidden='hidden' href=address></a>");
+            });
+            $(".mark-helpful").click(function () {
+                count_helpful = 1;
+                var params = {
+                    format: 'json',
+                    q: '{{ question.slug }}',
+                    count_helpful: count_helpful,
+                    count_helpless: count_helpless
+                };
+                $.getJSON(endpoint, params, function(data, status, jqXHR){
+                // handle callback here
+                    if (data.error) {
+                        console.log("Bad response\n");
+                        $("#error-message").show().css("visibility","visible");
+                    } else if (data.success) {
+                          $(".feedback").text("{% trans 'Thank you for your feedback' %}");
+                          if (data.count_helpful > 1)
+                              $('#opinion').text(data.count_helpful+ "{% trans ' people approved' %}");
+                          else
+                              if ( data.count_helpful === 1 )
+                                $('#opinion').text("{% trans "You're the first to have approved" %}");
+                    }
+
+                });
+            });
+            $(".mark-helpless").click(function () {
+                count_helpless =1;
+                var params = {
+                    format: 'json',
+                    q: '{{ question.slug }}',
+                    count_helpful: count_helpful,
+                    count_helpless: count_helpless
+                };
+                $.getJSON(endpoint, params, function(data, status, jqXHR){
+                // handle callback here
+                    if (data.error) {
+                        console.log("Bad response\n");
+                        $("#error-message").show().css("visibility","visible");
+                    } else if (data.success) {
+                        $(".feedback").text("{% trans 'Thank you for your feedback' %}");
+                    }
+
+                });
+            });
+            var params = {
+                format: 'json',
+                q:'{{ question.slug }}',
+                user_views: 1
+            };
+            $.getJSON(endpoint, params, function(data, status, jqXHR){
+                // handle callback here
+                    if (data.error) {
+                        console.log("Bad response\n");
+                    } else if (data.success) {
+                        console.log("This topic has been read\n");
+                    }
+
+            });
+        })
+    </script>
+{% endblock %}

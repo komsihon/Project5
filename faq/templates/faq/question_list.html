@@ -1,23 +1,28 @@
-{% extends 'faq/topic.html' %}
+{% extends 'faq/question_detail.html' %}
 {% load i18n staticfiles auth_tokens static %}
-{#{% load startswith %}#}
 {% block page_title %}
     <title> ikwen FAQ</title>
+{% endblock %}
+{% block head_style %}
+    {{ block.super }}
+    <style>
+        .header-opinion {display: none;}
+    </style>
 {% endblock %}
 {% block response_header %}{% endblock %}
 {% block response_core %}
     <div style="margin-bottom:10vh">
         <div style="margin-bottom: 6vh;">
             <h3 style="color:#32373b;" >
-                {% trans "Searching FAQ for" %} '{{ queried_question }}'
+                {% trans "Searching FAQ for" %} '{{ q }}'
             </h3>
         </div>
         <ul style="list-style: none;padding:0">
-            {% if category_list|length > 0 %}
-                {% for category in category_list %}
-                    <li><h4 style="margin-top:30px"><a href="{% url 'app_categories_list' category.app.slug %}" style="text-decoration: none;color:#233682;">
-                        {% for word in category.name.split %}
-                            {% if queried_question|lower in word|lower %}
+            {% if topic_list|length > 0 %}
+                {% for topic in topic_list %}
+                    <li><h4 style="margin-top:30px"><a href="{% url 'faq:show_topic_list' topic.app.slug %}" style="text-decoration: none;color:#233682;">
+                        {% for word in topic.title.split %}
+                            {% if q|lower in word|lower %}
                                 <strong style="color: #000;">
                                     {{ word }}
                                 </strong>
@@ -28,11 +33,11 @@
                     </a></h4></li>
                 {% endfor %}
             {% endif %}
-            {% if question_list|length > 0 %}
-                {% for question in question_list %}
-                    <li style=""><h4 style="margin-top:30px"><a href="{% url 'topic_detail' app_slug=question.topic.category.app.slug category_slug=question.topic.category.slug question_slug=question.slug %}" style="text-decoration: none;color:#233682;">
-                    {% for word in question.text.split %}
-                        {% if queried_question|lower in word|lower %}
+            {% if question_list_1|length > 0 %}
+                {% for question in question_list_1 %}
+                    <li style=""><h4 style="margin-top:30px"><a href="{% url 'faq:question_detail' question.topic.app.slug question.topic.slug question.slug %}" style="text-decoration: none;color:#233682;">
+                    {% for word in question.label.split %}
+                        {% if q|lower in word|lower %}
                             <strong style="color: #000;">
                                 {{ word }}
                             </strong>
@@ -43,21 +48,21 @@
                     </a></h4></li>
                  {% endfor %}
             {% endif %}
-            {% if topic_list|length > 0 %}
-                {% for topic in topic_list %}
-                    <li ><h4 style="margin-top:30px"><a style="text-decoration:none;color:#233682;" href="{% url 'topic_detail' app_slug=topic.category.app.slug category_slug=topic.category.slug question_slug=topic.question.slug %}">
-                        {% for word in topic.question.text.split %}
-                            {% if queried_question|lower in word|lower %}
+            {% if question_list_2|length > 0 %}
+                {% for question in question_list_2 %}
+                    <li ><h4 style="margin-top:30px"><a style="text-decoration:none;color:#233682;" href="{% url 'faq:question_detail' question.topic.app.slug question.topic.slug question.slug %}">
+                        {% for word in question.label.split %}
+                            {% if q|lower in word|lower %}
                                 <strong style="color: #000;">{{ word }}</strong>
                             {% else %}
                                 {{ word }}
                             {% endif %}
                         {% endfor %}
                     </a></h4></li>
-                    <li style=""><h5><a style="text-decoration: none;color:rgba(61,61,61,0.91)" href="{% url 'topic_detail' app_slug=topic.category.app.slug category_slug=topic.category.slug question_slug=topic.question.slug %}">
-                    {% for sentence in topic.sentence_with_keyword %}
+                    <li style=""><h5><a style="text-decoration: none;color:rgba(61,61,61,0.91)" href="{% url 'faq:question_detail' question.topic.app.slug question.topic.slug question.slug %}">
+                    {% for sentence in question.sentence_with_keyword|safe %}
                         {% for word in sentence.split %}
-                            {% if queried_question|lower in word|lower %}
+                            {% if q|lower in word|lower %}
                                 <strong style="color: #000;">
                                     {{ word }}
                                 </strong>
@@ -68,16 +73,15 @@
                     {% endfor %}
                     </a></h5></li>
                 {% endfor %}
-            {% elif question_list|length == 0 and category_list|length == 0 %}
-                     <h4 style="color: rgba(18,18,18,0.98);">{% trans "No result found" %}</h4>{% trans "Please check your spelling or try another term." %}
+            {% elif question_list_1|length == 0 and question_list_2|length == 0 and topic_list|length == 0 %}
+                <h4 style="color: rgba(18,18,18,0.98);">{% trans "No result found" %}</h4>{% trans "Please check your spelling or try another term." %}
             {% endif %}
 
         </ul>
     </div>
     <div>
         <div class="mb-lg-auto mb-5 col-lg-9 col-sm-6 col-md-7 col-md-offset-2 col-sm-offset-3">
-{#            style="float: none; margin: 30vh auto; width: 80%;"#}
-            <a href="{% url 'faqhome' %}" class="go-home">
+            <a href="{% url 'home' %}" class="go-home">
                 {% trans 'Go back home' %}
             </a>
         </div>

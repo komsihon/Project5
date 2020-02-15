@@ -2,7 +2,7 @@
 {% load i18n static humanize auth_tokens user_agents %}
 
 {% block page_title %}
-    <title>{{ app_name }} - {% trans 'FAQ' %}</title>
+    <title>{{ app.name }} - {% trans 'FAQ' %}</title>
 {% endblock %}
 
 {% block head_style %}
@@ -13,7 +13,8 @@
         <meta name="abstract" content="{{ service.project_name }} - {{ config.slogan }}" />
         <meta name="description" content="{{ config.short_description }}" />
         <meta property="og:title" content="{{ service.project_name }}" />
-        <meta property="og:image" content="{% get_media_prefix %}{{ config.logo.name }}" />
+{#        <meta property="og:image" content="{% get_media_prefix %}{{ config.logo.name }}" />#}
+        <meta property="og:image" content="{% static 'faq/img/ikwen-logo.png' %}" />
         <meta property="og:description" content="{{ config.short_description }}" />
         <meta property="og:url" content="{{ service.url }}" />
         <meta property="og:site_name" content="{{ service.domain|upper }}" />
@@ -31,7 +32,7 @@
     {% block banner %}
         <div class="query-section">
             <div class="container question-search3 form-group" >
-                <form role="form" class="horizontal-form" action="{% url 'question_list' %}"  name="formQuestion" id="form-question">
+                <form role="form" class="horizontal-form" action="{% url 'faq:show_question_list' %}"  name="formQuestion" id="form-question">
                     <div class="question-guide">
                         <p class="col-12">
                             <h2>
@@ -40,21 +41,18 @@
                                 {% else %}
                                     {% trans "How can we help you ?" %}
                                 {% endif %}
-
                             </h2>
                         </p>
                     </div>
                     <div id="input">
                         <div class="container-fluid ">
                             <label class="sr-only" for="question">question search</label>
-                            <input  type="text" value="" placeholder="{% trans "Describe your question" %} " name="question" id="question" size="40" autofocus class="form-control" autocomplete="off">
+                            <input type="text" value="" placeholder="{% trans "Describe your question" %}" name="q" size="40" autofocus class="form-control question" autocomplete="off">
                         </div>
                     </div>
                     <div class="browsing-guide" >
-                        <p class="col-4">
-                            <h4>
-                                {% trans "You can also browse the topics to find what you are looking for" %}
-                            </h4>
+                        <p class="col-sm-4">
+                            <h4>{% trans "You can also browse the questions to find what you are looking for" %}</h4>
                         </p>
                     </div>
                 </form>
@@ -65,12 +63,12 @@
         <div class="container-fluid" id="core-general-faq">
             <div class="row" style="padding: 0 0 125px;">
                 <div class="panel-group" id="accordion" style="margin-bottom: 0;">
-                    {% for category in category_list %}
+                    {% for topic in topic_list %}
                       <div class="panel panel-default accordion-card mb-lg-auto mb-5 col-sm-6 col-sm-offset-3">
                         <div class="panel-heading accordion-header">
                           <h4 class="mb-0 headding-style panel-title">
-                            <a class="category-name" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}">
-                                {{ category.name }}
+                            <a class="topic-name" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}">
+                                {{ topic.title }}
                                 <i class="fas fa-angle-right rotate-icon italic-style" aria-hidden="true"></i>
                             </a>
                           </h4>
@@ -78,17 +76,17 @@
                         <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse accordion-body w3-z">
                           <div class="panel-body panel-question">
                               <ul class="list-unstyled nav nav-pills nav-stacked" >
-                                {% for topic in category.topic_set.all %}
+                                {% for question in topic.question_set.all %}
                                     <li>
                                         <span>
-                                            <a href="{% url 'topic_detail' app_slug=category.app.slug category_slug=category.slug question_slug=topic.question.slug %}" class="question-of-category">
+                                            <a href="{% url 'faq:question_detail' app.slug question.topic.slug question.slug %}" class="question-of-topic">
                                                 {% if request|is_mobile %}
-                                                    {{ topic.get_question_text|truncatechars:22 }}
+                                                    {{ question.label|truncatechars:22 }}
                                                 {% else %}
                                                     {% if request|is_tablet %}
-                                                        {{ topic.get_question_text|truncatechars:52 }}
+                                                        {{ question.label|truncatechars:52 }}
                                                     {% elif request|is_pc %}
-                                                        {{ topic.get_question_text|truncatechars:74 }}
+                                                        {{ question.label|truncatechars:74 }}
                                                     {% endif %}
                                                 {% endif %}
                                             </a>
@@ -101,7 +99,7 @@
                       </div>
                     {% endfor %}
                     <div class="mb-lg-auto mb-5 col-sm-6 col-sm-offset-3">
-                        <a href="{% url 'faqhome' %}" class="go-home">
+                        <a href="{% url 'home' %}" class="go-home">
                             {% trans 'Go back home' %}
                         </a>
                     </div>
@@ -148,7 +146,7 @@
              <div class="col-sm-4 col-xs-4 footer-mobile-adjust">
                  <h5 class="h5-footer-core">{% trans "Support" %}</h5>
                  <ul class="footer-links-group">
-                     <li><a class="footer-links" href="{% url 'faqhome' %}" target="_blank">{% trans "FAQ" %}</a></li>
+                     <li><a class="footer-links" href="{% url 'home' %}" target="_blank">{% trans "FAQ" %}</a></li>
                      <li><a class="footer-links" href="http://blog.ikwen.com/" target="_blank">{% trans "Blog" %}</a></li>
                      <li><a class="footer-links" href="http://support.ikwen.com/" target="_blank">{% trans "Help desk" %}</a></li>
                  </ul>
@@ -183,7 +181,7 @@
             $("#question").change(function () {
                 var q = $(this).val(),
                     autocomplete_infos,
-                    endpoint = "{% url 'autocomplete_user_research' %}",
+                    endpoint = "{% url 'faq:autocomplete_user_research' %}",
                     params = {
                     format: 'json',
                     q:q
@@ -192,29 +190,29 @@
                 $.getJSON(endpoint,params,function (data,status,jqXHR) {
                    if (data.success) {
                        autocomplete_infos = data.data;
-                       var topic_list_with_keyword_in_question = new Object(autocomplete_infos['topic_list_with_keyword_in_question']),
-                           topic_list_with_keyword_in_answer = new Object(autocomplete_infos['topic_list_with_keyword_in_answer']),
-                           category_list = new Object(autocomplete_infos['category_list']),
-                           category, sentence, topic;
+                       var question_list_with_keyword_in_label = new Object(autocomplete_infos['question_list_with_keyword_in_label']),
+                           question_list_with_keyword_in_answer = new Object(autocomplete_infos['question_list_with_keyword_in_answer']),
+                           topic_list = new Object(autocomplete_infos['topic_list']),
+                           topic, sentence, question;
 
-                       for (category in category_list ) {
+                       for (topic in topic_list ) {
                            var item1 = {};
-                           item1.value =  category_list[category]['name'];
-                           item1.label = category_list[category]['name'];
+                           item1.value =  topic_list[topic]['title'];
+                           item1.label = topic_list[topic]['title'];
                            item1.content = "";
                            item1.object = this;
                            items.push(item1);
 
                        }
-                       $.each(topic_list_with_keyword_in_answer,function (ind,topic) {
+                       $.each(question_list_with_keyword_in_answer, function (ind,question) {
                            var item2 = {};
-                           item2.value = topic["question_text"];
+                           item2.value = question["label"];
                            item2.label =  item2.value;
                            item2.content = function () {
-                               var sentence_list = topic["sentence_with_keyword"],
+                               var sentence_list = question["sentence_with_keyword"],
                                    paragraph = "";
                                $.each(sentence_list,function (ind,sentence) {
-                                   paragraph+= sentence;
+                                   paragraph += sentence;
                                });
                                return paragraph;
                            }();
@@ -222,9 +220,9 @@
                            items.push(item2);
 
                        });
-                       $.each(topic_list_with_keyword_in_question,function (ind,topic) {
+                       $.each(question_list_with_keyword_in_label, function (ind,question) {
                            var item3 = {};
-                          item3.value = topic["question_text"];
+                          item3.value = question["label"];
                           item3.label =  item3.value;
                           item3.content = "";
                           item3.object = this;
@@ -266,7 +264,7 @@
     {% block accordion %}
         <script type="text/javascript">
             $(function () {
-              var selector = $("a.category-name"),
+              var selector = $("a.topic-name"),
                 categories = $.makeArray(selector), previous_click_index = -1, previous_click = null, clickIndex = -1,
                 angle_icon = $("i.fas");
                 $(this).find(selector).click(function () {

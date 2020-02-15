@@ -1,31 +1,35 @@
-from django.db.models.query import QuerySet
-from django.core.urlresolvers import reverse
-from django.http import Http404, HttpRequest, HttpResponse
-from django.template import loader
-from django.utils.translation import get_language
-from django.views.i18n import set_language
-from django.views.generic import TemplateView
-
-from accesscontrol.backends import UMBRELLA
-from ikwen.core.utils import to_dict
-from faq.models import Topic, Category, Application, Question
-from django.shortcuts import render
-from forms import *
-
-import json
 import sys
+import json
+import re
 
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse, HttpResponseRedirect
+from django.utils.translation import get_language, gettext as _
+from django.views.generic import TemplateView
+from django.shortcuts import get_object_or_404
+
+from ikwen.core.views import HybridListView, ChangeObjectBase
+from ikwen.core.utils import to_dict
+
+from faq.admin import TopicAdmin, QuestionAdmin
+from faq.models import Application, Topic, Question
 
 reload(sys)
 sys.setdefaultencoding('utf-8') # Allow system to decode utf-8's strings such as ',",|,?
 
 
-def sentence_with_keyword(paragraph, keyword_word):
+def create_sentence_with_keyword(paragraph, keyword_word):
     sentence_list = []
     for sentence in paragraph.split('.'):
         if keyword_word in sentence:
             sentence_list.append(sentence+".\n")
     return sentence_list
+
+
+def clean_html(raw_html):
+    cleanr = re.compile('<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});')
+    cleantext = re.sub(cleanr, '', raw_html)
+    return cleantext
 
 
 class Home(TemplateView):
@@ -35,167 +39,195 @@ class Home(TemplateView):
         language = get_language()
         context = super(Home, self).get_context_data(**kwargs)
         app_list = []
-        for app in Application.objects.using(UMBRELLA).all().order_by('name'):
-            category_list = list(Category.objects.filter(app=app))
-            topic_list = Topic.objects.filter(category__in=category_list, language__istartswith=language)
-            if topic_list.count() > 0:
-                app.topic_list = topic_list
+        # add_database(UMBRELLA)
+        # for app in Application.objects.using(UMBRELLA).all().order_by('name'):
+        # for app in get_object_or_404(Application).objects.order_by('name').all():
+        for app in Application.objects.all().order_by('name'):
+            topic_list = list(Topic.objects.filter(app=app, language=language))
+            question_list = Question.objects.filter(topic__in=topic_list, language=language)
+            if question_list.count() > 0:
+                app.question_list = question_list
                 app_list.append(app)
 
         context['app_list'] = app_list
-        # context['question_to_remove'] = [question for question in Question.objects.all() if
-        #                                  question not in [t.question for t in Topic.objects.all()]]
-        # context['topic_to_remove'] = [topic for topic in Topic.objects.all() if topic.question not in Question.objects.all()]
 
         return context
 
 
-class TopicDetails(TemplateView):
-    template_name = 'faq/topic.html'
+class QuestionDetail(TemplateView):
+    template_name = 'faq/question_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(TopicDetails, self).get_context_data()
+        context = super(QuestionDetail, self).get_context_data()
         app_slug = kwargs['app_slug']
-        category_slug = kwargs['category_slug']
+        topic_slug = kwargs['topic_slug']
         question_slug = kwargs['question_slug']
-        question = Question.objects.get(slug=question_slug)
-        category = Category.objects.get(slug=category_slug)
-        app = Application.objects.using(UMBRELLA).get(slug=app_slug)
+        topic = get_object_or_404(Topic, slug=topic_slug)
+        question = get_object_or_404(Question, slug=question_slug)
+
+        # add_database(UMBRELLA)
+        app = get_object_or_404(Application, slug=app_slug)
         current_language = get_language()
         prev_lang = ''
-        if question.language.lower() != current_language:
+        if question.language != current_language:
             prev_lang = question.language
-        while category.language.lower() != current_language:
-            category = category.translated_versions
+        while topic.language != current_language:
+            topic = topic.base_lang_version
 
-        while question.language.lower() != current_language:
-            question = question.translated_versions
+        while question.language != current_language:
+            if not question.base_lang_version:
+                context['message'] = _('The question is not yet available in your selected language')
+                break
+            question = question.base_lang_version
 
-        question = Question.objects.get(slug=question.slug, language__istartswith=current_language)
-        topic = Topic.objects.filter(language__istartswith=current_language).get(question=question)
         context['app'] = app
-        context['category'] = category
-        context['question'] = question
         context['topic'] = topic
-
-        # if prev_lang == '':
-        #     next_url = reverse('topic_detail', kwargs={'app_slug': app_slug,
-        #                                                'category_slug': category_slug,
-        #                                                'question_slug': question_slug,
-        #                                                }
-        #                        )
-        #     return HttpResponseRedirect(next_url)
+        context['question'] = question
 
         return context
 
+    def render_to_response(self, context, **response_kwargs):
+        lang = get_language()
+        topic = context['topic']
+        question = context['question']
+        if topic.language != lang:
+            try:
+                translated_topic = Topic.objects.get(language=lang, base_lang_version=topic.base_lang_version)
+                translated_question = Question.objects.get(language=lang, base_lang_version=question.base_lang_version)
+                next_url = reverse('faq:question_detail', args=(translated_topic.app.slug, translated_topic.slug,
+                                                                translated_question.slug))
+                return HttpResponseRedirect(next_url)
+            except:
+                pass
+        return super(QuestionDetail, self).render_to_response(context, **response_kwargs)
 
-class ApplicationCategoriesList(TemplateView):
+
+class ShowTopicList(TemplateView):
     """
     written by: Silatchom SIAKA (AI responsible)
     """
-    template_name = 'faq/app_categories.html'
+    template_name = 'faq/show_topic_list.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ApplicationCategoriesList, self).get_context_data()
+        context = super(ShowTopicList, self).get_context_data()
         app_slug = kwargs['app_slug']
         language = get_language()
-        category_list = []
-        app = Application.objects.using(UMBRELLA).get(slug=app_slug)
-        for category in Category.objects.filter(language__istartswith=language, app=app).order_by('name'):
-            topic_list = []
-            for topic in Topic.objects.filter(category=category, language__istartswith=language):
-                topic_list.append(topic)
-            category.topic_list = topic_list
-            category_list.append(category)
-
-        # question_list = []
-        # for q in Question.objects.all():
-        #     if q not in [topic.question for topic in Topic.objects.all()]:
-        #         question_list.append(q)
-        # question_list2 = []
-        # for q in Question.objects.exclude(language__istartswith='en').exclude(language__istartswith='fr'):
-        #     question_list2.append(q)
-        # topic_list = [q for q in Topic.objects.filter(translated_versions__isnull=True)]
-        context['category_list'] = category_list
-        context['app_name'] = Application.objects.using(UMBRELLA).get(slug=app_slug).name.lower().split()[0]
+        topic_list = []
+        app = get_object_or_404(Application, slug=app_slug)
+        for topic in Topic.objects.filter(language=language, app=app).order_by('title'):
+            question_list = []
+            for question in Question.objects.filter(topic=topic, language=language):
+                question_list.append(question)
+            topic.question_list = question_list
+            topic_list.append(topic)
+        context['topic_list'] = topic_list
         context['app'] = app
-        # context['topic_list'] = topic_list
-        # context['question_list'] = question_list
         return context
 
-    # def post
 
-
-class QuestionList(TemplateView):
-    """"
+class ShowQuestionList(TemplateView):
+    """
     """
     template_name = 'faq/question_list.html'
 
     def get_context_data(self, **kwargs):
         language = get_language()
-        context = super(QuestionList, self).get_context_data()
-        q = self.request.GET["question"]
-        topic_list = []
-        category_list = list(Category.objects.filter(name__icontains=q, language__istartswith=language))
-        question_list = list(Question.objects.filter(text__icontains=q, language__istartswith=language))
+        context = super(ShowQuestionList, self).get_context_data()
+        q = self.request.GET["q"]
+        tag_list = []
 
-        for topic in Topic.objects.filter(language__istartswith=language).exclude(question__in=question_list):
-            if q not in category_list:
-                # topic.question not in question_list and
-                topic.sentence_with_keyword = sentence_with_keyword(topic.answer, q)
-                if topic.sentence_with_keyword.__len__() > 0:
-                    topic_list.append(topic)
+        for word in q.split(' '):
+            tag_list.append(word[:4])
 
-        for question in question_list:
-            question.topic_set = []
-            for topic in Topic.objects.filter(question=question, language__istartswith=language):
-                question.topic_set.append(topic)
+        tag_list.sort()
+        tags = ' '.join(tag_list)
+        topic_list = list(Topic.objects.filter(title__icontains=tags, language=language))
+        question_list_1 = list(Question.objects.filter(label__icontains=tags, language=language))
 
-        context['question_list'] = question_list
+        # question_list_2 = []
+        # for question in Question.objects.filter(language=language):
+        #     if question not in question_list_1:
+        #         if q not in topic_list:
+        #             question.sentence_with_keyword = create_sentence_with_keyword(question.answer, q)
+        #             # question.sentence_with_keyword = create_sentence_with_keyword(clean_html(question.answer), q)
+        #             if len(question.sentence_with_keyword) > 0:
+        #                 question_list_2.append(question)
+
+        context['question_list_1'] = question_list_1
+        # context['question_list_2'] = question_list_2
         context['topic_list'] = topic_list
-        context['category_list'] = category_list
-        context['queried_question'] = q
+        context['q'] = q
         return context
 
 
 def save_user_feedback(request, *args, **kwargs):
     language = get_language()
     q = request.GET
-    topic = q.get('topic')
-    matched_topic = Topic.objects.filter(language__istartswith=language).get(slug=topic)
+    question = q.get('q')
+    matched_question = Question.objects.get(language=language, slug=question)
     count_helpful = q.get('count_helpful')
     count_helpless = q.get('count_helpless')
     user_views = q.get('user_views')
     if user_views:
-        matched_topic.user_views += int(user_views)
+        matched_question.user_views += int(user_views)
     if count_helpless or count_helpful:
-        matched_topic.count_helpful += int(count_helpful)
-        matched_topic.count_helpless += int(count_helpless)
-    matched_topic.save()
+        matched_question.count_helpful += int(count_helpful)
+        matched_question.count_helpless += int(count_helpless)
+    matched_question.save()
     response = "Successfully receive the request"
-    return HttpResponse(json.dumps({'success': True, 'count_helpful': matched_topic.count_helpful}),
+    return HttpResponse(json.dumps({'success': True, 'count_helpful': matched_question.count_helpful}),
                         'content-type: text/json')
 
 
 def autocomplete_user_research(request, *args, **kwargs):
     language = get_language()
     q = request.GET['q']
-    topic_list_with_keyword_in_question = []
-    topic_list_with_keyword_in_answer = []
+    question_list_with_keyword_in_label = []
+    question_list_with_keyword_in_answer = []
 
-    for topic in Topic.objects.filter(language__istartswith=language):
-        topic.question_text = topic.question_text
-        if q not in [category.name for category in Category.objects.filter(name__icontains=q)]:
-            if topic.question in Question.objects.filter(text__icontains=q):
-                topic_list_with_keyword_in_question.append(to_dict(topic))
+    for question in Question.objects.filter(language=language):
+        if q not in [topic.title for topic in Topic.objects.filter(title__icontains=q)]:
+            if q in question:
+                question_list_with_keyword_in_label.append(to_dict(question))
             else:
-                topic.sentence_with_keyword = sentence_with_keyword(topic.answer, q)
-                if topic.sentence_with_keyword.__len__() > 0:
-                    topic_list_with_keyword_in_answer.append(to_dict(topic))
+                question.sentence_with_keyword = create_sentence_with_keyword(question.answer, q)
+                # question.sentence_with_keyword = create_sentence_with_keyword(clean(question.answer), q)
+                if len(question.sentence_with_keyword) > 0:
+                    question_list_with_keyword_in_answer.append(to_dict(question))
 
-    category_list = [to_dict(obj) for obj in Category.objects.filter(name__icontains=q)]
-    response = dict(topic_list_with_keyword_in_question=topic_list_with_keyword_in_question,
-                    topic_list_with_keyword_in_answer=topic_list_with_keyword_in_answer, category_list=category_list)
+    topic_list = [to_dict(obj) for obj in Topic.objects.filter(title__icontains=q)]
+    response = dict(question_list_with_keyword_in_label=question_list_with_keyword_in_label,
+                    question_list_with_keyword_in_answer=question_list_with_keyword_in_answer, topic_list=topic_list)
 
     return HttpResponse(json.dumps({'success': True, 'data': response}), 'content-type:text/json')
+
+
+class TopicList(HybridListView):
+    """
+    Here is the admin topic list view.
+    """
+    model = Topic
+    ordering = ('title',)
+    list_filter = ('language', 'app',)
+
+
+class QuestionList(HybridListView):
+    """
+    Here is the admin question list view.
+    """
+    model = Question
+    list_filter = ('language', 'topic', 'user_views', 'count_helpful', 'count_helpless')
+
+
+class ChangeTopic(ChangeObjectBase):
+    model = Topic
+    model_admin = TopicAdmin
+    label_field = 'title'
+
+
+class ChangeQuestion(ChangeObjectBase):
+    model = Question
+    model_admin = QuestionAdmin
+    label_field = 'label'
+
 

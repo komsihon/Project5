@@ -1,4 +1,4 @@
-{% extends 'faq/app_categories.html' %}
+{% extends 'faq/show_topic_list.html' %}
 {% load i18n staticfiles auth_tokens static user_agents %}
 {% block page_title %}
     <title> ikwen FAQ </title>
@@ -16,33 +16,33 @@
         <div class="row">
             {% for app in app_list %}
                 <div class="col-md-6 app-card">
-                    <a class="img-link" href="{% url 'app_categories_list' app.slug %}">
+                    <a class="img-link" href="{% url 'faq:show_topic_list' app.slug %}">
                         <h4>
                             <img class="picture-features" src="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}">
-                                {{ app.name.split|first }}
+                                {{ app.name }}
                         </h4>
                     </a>
                     <div>
                         <p class="paragraph">
                             <ol class="ordered-list-style">
-                                {% for topic in app.topic_list %}
-                                    {% if forloop.counter  <= 5 %}
+                                {% for question in app.question_list %}
+                                    {% if forloop.counter <= 5 %}
                                         <li>
-                                            <a id="question" href="{% url 'topic_detail' app_slug=app.slug category_slug=topic.category.slug question_slug=topic.question.slug %}">
+                                            <a class="question" href="{% url 'faq:question_detail' app.slug question.topic.slug question.slug %}">
                                             {% if request|is_mobile %}
-                                                {{ topic.get_question_text|truncatechars:30 }}
+                                                {{ question.label|truncatechars:30 }}
                                             {% else %}
                                                 {% if request|is_tablet %}
-                                                    {{ topic.get_question_text|truncatechars:50 }}
+                                                    {{ question.label|truncatechars:50 }}
                                                 {% elif request|is_pc %}
-                                                    {{ topic.get_question_text|truncatechars:65 }}
+                                                    {{ question.label|truncatechars:65 }}
                                                 {% endif %}
                                             {% endif %}
                                             </a>
                                         </li>
                                     {% endif %}
                                 {% endfor %}
-                                <li><a href="{% url 'app_categories_list' app.slug %}" class="parent-link-full-display"><span class="link-full-display">{% trans 'View all questions' %}</span></a></li>
+                                <li><a href="{% url 'faq:show_topic_list' app.slug %}" class="parent-link-full-display"><span class="link-full-display">{% trans 'View all questions' %}</span></a></li>
                             </ol>
                         </p>
                     </div>
@@ -51,14 +51,7 @@
         </div>
     </div>
 </div>
-{#<div>#}
-{#    {% for q in question_to_remove %}#}
-{#        {{ q }}#}
-{#    {% endfor %}#}
-{#    {% for t in topic_to_remove %}#}
-{#        {{ t }}#}
-{#    {% endfor %}#}
-{#</div>#}
+
 {% endblock %}
 
 

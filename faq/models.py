@@ -1,82 +1,72 @@
+from django.conf import settings
 from django.db import models
+from ikwen.accesscontrol.backends import UMBRELLA
 from ikwen.core.models import Application, Model
 from ikwen.accesscontrol.models import Member
 from django.template.defaultfilters import slugify
-LANGUAGES = (
-        ('EN', 'English'),
-        ('FR', 'French'),
-    )
-
-
-class Question(Model):
-    text = models.CharField(max_length=200, null=True, blank=True)
-    slug = models.SlugField(max_length=150, blank=False, unique=True)
-    language = models.CharField(max_length=2, choices=LANGUAGES)
-    translated_versions = models.ForeignKey('self', null=True, blank=True)
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.text)
-        super(Question, self).save()
-
-    def __unicode__(self):
-        return self.text
-
-
-class Category(Model):
-    name = models.CharField(max_length=100, null=False, blank=True)  # type: unicode
-    app = models.ForeignKey(Application)
-    slug = models.SlugField(max_length=250, blank=False, unique=True)
-    language = models.CharField(max_length=2, choices=LANGUAGES)
-    translated_versions = models.ForeignKey('self', null=True, blank=True)
-    order_of_appearance = models.IntegerField(default=0)
-
-    def __unicode__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.name)
-        super(Category, self).save()
 
 
 class Topic(Model):
     """
-    doc
+    Topic field which replaces category model in the previous modeling
     """
-    question = models.OneToOneField(Question, null=False, blank=True)
-    slug = models.SlugField(max_length=240, blank=False, unique=True)
-    answer = models.TextField()
-    answer_with_html_tags = models.TextField(blank=True)
-    category = models.ForeignKey(Category)
+    title = models.CharField(max_length=100, null=True, blank=True)  # type: unicode
+    slug = models.SlugField(max_length=250, null=True, blank=True)
+    app = models.ForeignKey(Application, null=True, blank=True)
+    language = models.CharField(max_length=2, choices=getattr(settings, "LANGUAGES"), null=True, blank=True)
+    base_lang_version = models.ForeignKey('self', null=True, blank=True)
+    order_of_appearance = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = (
+            ('app', 'title'),
+            ('app', 'slug')
+        )
+
+    def __unicode__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.title)
+        super(Topic, self).save()
+
+
+class Question(Model):
+    """
+    Question field which replaces Topic model in the previous modeling
+    """
+    admin = Member.objects.get(username__icontains='siaka')
+    label = models.CharField(max_length=250, null=True, blank=True)
+    slug = models.SlugField(max_length=240)
+    tags = models.CharField(null=True, blank=True)
+    answer = models.TextField(blank=True)
+    topic = models.ForeignKey(Topic, null=True, blank=True)
     user_views = models.IntegerField(default=0)
     count_helpful = models.IntegerField(default=0)
     count_helpless = models.IntegerField(default=0)
-    author = models.ForeignKey(Member)
-    language = models.CharField(max_length=2, choices=LANGUAGES)
-    translated_versions = models.ForeignKey('self', null=True, blank=True)
+    author = models.ForeignKey(Member, null=True, editable=False,  default=admin.id)
+    language = models.CharField(max_length=2, choices=getattr(settings, "LANGUAGES"), null=True, blank=True)
+    base_lang_version = models.ForeignKey('self', null=True, blank=True)
+    order_of_appearance = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = (
+            ('topic', 'label'),
+            ('topic', 'slug')
+        )
 
     def __unicode__(self):
         return self.slug
 
-    def get_question_text(self):
-        return self.question.text
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(self.label)
+        super(Question, self).save()
 
-# from faq.utils import unique_slug_generator
 
 
-# def Post(models.Model):
-#     title = models.CharField(max_length=150)
-#     body = models.TextField()
-#
-#     def __str__(self):
-#         return self.title
-#
-#     def slug_save(sender, instance, *args, **kwargs):
-#         if not instance.slug:
-#             instance.slug = unique_slug_generator(instance, instance.title, instance.body)
-#
-# pre_save.connect(slug_save, sender=Post)
+
 
 
 
