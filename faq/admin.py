@@ -13,9 +13,9 @@ class TopicAdmin(admin.ModelAdmin):
 
 class QuestionAdmin(admin.ModelAdmin):
     # prepopulated_fields = {"slug": ("label",)}
-    fields = ('label', 'answer', 'tags', 'topic', 'user_views',
+    fields = ('label', 'tags', 'topic', 'user_views',
               'count_helpful', 'count_helpless', 'language', 'base_lang_version')
-    list_display = ('label', 'answer', 'tags', 'topic', 'user_views',
+    list_display = ('label', 'tags', 'topic', 'user_views',
                     'count_helpful', 'count_helpless', 'author', 'language', 'base_lang_version')
 
 

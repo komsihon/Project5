@@ -208,6 +208,7 @@ class TopicList(HybridListView):
     """
     model = Topic
     ordering = ('title',)
+    search_field = 'title'
     list_filter = ('language', 'app',)
 
 
@@ -216,7 +217,8 @@ class QuestionList(HybridListView):
     Here is the admin question list view.
     """
     model = Question
-    list_filter = ('language', 'topic', 'user_views', 'count_helpful', 'count_helpless')
+    search_field = 'label'
+    list_filter = ('label', 'language', 'topic', 'user_views', 'count_helpful', 'count_helpless')
 
 
 class ChangeTopic(ChangeObjectBase):
