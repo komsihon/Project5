@@ -16,6 +16,7 @@ class Topic(Model):
     language = models.CharField(max_length=2, choices=getattr(settings, "LANGUAGES"), null=True, blank=True)
     base_lang_version = models.ForeignKey('self', null=True, blank=True)
     order_of_appearance = models.IntegerField(default=0)
+    summary = models.TextField(blank=True, null=True)
 
     class Meta:
         unique_together = (
@@ -39,7 +40,7 @@ class Question(Model):
     admin = Member.objects.get(username__icontains='siaka')
     label = models.CharField(max_length=250, null=True, blank=True)
     slug = models.SlugField(max_length=240)
-    tags = models.CharField(null=True, blank=True)
+    tags = models.CharField(max_length=250, null=True, blank=True)
     answer = models.TextField(blank=True)
     topic = models.ForeignKey(Topic, null=True, blank=True)
     user_views = models.IntegerField(default=0)
@@ -49,19 +50,25 @@ class Question(Model):
     language = models.CharField(max_length=2, choices=getattr(settings, "LANGUAGES"), null=True, blank=True)
     base_lang_version = models.ForeignKey('self', null=True, blank=True)
     order_of_appearance = models.IntegerField(default=0)
+    appear_on_home = models.BooleanField(default=False)
+    summary = models.TextField(blank=True, null=True)
 
     class Meta:
         unique_together = (
             ('topic', 'label'),
             ('topic', 'slug')
         )
+        ordering = ('label', )
 
     def __unicode__(self):
         return self.slug
 
     def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.label)
+        self.slug = slugify(self.label)
+        tag_list = [tag[:4] for tag in self.slug.split('-')]
+        tag_list.sort()
+        self.tags = ' '.join(tag_list)
+
         super(Question, self).save()
 
 

@@ -1,96 +1,84 @@
 {% extends 'core/base_bs.html' %}
-{% load i18n static humanize auth_tokens user_agents %}
+{% load i18n static humanize webdesign auth_tokens user_agents %}
 
 {% block page_title %}
     <title>{{ app.name }} - {% trans 'FAQ' %}</title>
 {% endblock %}
 
+{% block meta %}
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="http://assets.ikwen.com/ikwen/favicons/ms-icon-144x144.png">
+    <meta name="abstract" content="{{ service.project_name }} - {{ config.slogan }}" />
+    <meta name="description" content="{{ config.short_description }}" />
+    <meta property="og:title" content="{{ service.project_name }}" />
+    <meta property="og:image" content="{% static 'faq/img/ikwen-logo.png' %}" />
+    <meta property="og:description" content="{{ config.short_description }}" />
+    <meta property="og:url" content="{{ service.url }}" />
+    <meta property="og:site_name" content="{{ service.domain|upper }}" />
+    <link rel="icon" type="image/jpg" href="{% static 'faq/img/ikwen_kernel_logo.png' %}">
+
+{% endblock %}
+
 {% block head_style %}
     {{ block.super }}
-    {% block meta %}
-        <meta name="msapplication-TileColor" content="#ffffff">
-        <meta name="msapplication-TileImage" content="http://assets.ikwen.com/ikwen/favicons/ms-icon-144x144.png">
-        <meta name="abstract" content="{{ service.project_name }} - {{ config.slogan }}" />
-        <meta name="description" content="{{ config.short_description }}" />
-        <meta property="og:title" content="{{ service.project_name }}" />
-{#        <meta property="og:image" content="{% get_media_prefix %}{{ config.logo.name }}" />#}
-        <meta property="og:image" content="{% static 'faq/img/ikwen-logo.png' %}" />
-        <meta property="og:description" content="{{ config.short_description }}" />
-        <meta property="og:url" content="{{ service.url }}" />
-        <meta property="og:site_name" content="{{ service.domain|upper }}" />
-
-    {% endblock %}
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
-    <!-- Custom css -->
-    {% block custom-css %}
-        <link rel="stylesheet" type="text/css" href="{% static 'faq/css/faq.css' %}">
-        <link rel="icon" type="image/jpg" href="{% static 'faq/img/ikwen_kernel_logo.png' %}">
-    {% endblock %}
+    <link rel="stylesheet" type="text/css" href="{% static 'faq/css/faq.css' %}?v=24.04.20.02.49">
 {% endblock %}
 
 {% block content %}
-    {% block banner %}
-        <div class="query-section">
-            <div class="container question-search3 form-group" >
-                <form role="form" class="horizontal-form" action="{% url 'faq:show_question_list' %}"  name="formQuestion" id="form-question">
-                    <div class="question-guide">
-                        <p class="col-12">
-                            <h2>
-                                {% if app.name %}
-                                    {% trans "How can we help you on " %} {{ app.name }} <img width="40" src="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}"> ?
-                                {% else %}
-                                    {% trans "How can we help you ?" %}
-                                {% endif %}
-                            </h2>
-                        </p>
-                    </div>
-                    <div id="input">
-                        <div class="container-fluid ">
-                            <label class="sr-only" for="question">question search</label>
-                            <input type="text" value="" placeholder="{% trans "Describe your question" %}" name="q" size="40" autofocus class="form-control question" autocomplete="off">
-                        </div>
-                    </div>
-                    <div class="browsing-guide" >
-                        <p class="col-sm-4">
-                            <h4>{% trans "You can also browse the questions to find what you are looking for" %}</h4>
-                        </p>
-                    </div>
-                </form>
-            </div>
-        </div>
+    {% block seo %}
+{#        <h1>{%  %}</h1>#}
     {% endblock %}
+    <div class="query-section">
+        <div class="container question-search3 form-group" >
+            <form role="form" class="horizontal-form" action="{% url 'faq:show_question_list' %}"  name="formQuestion" id="form-question">
+                <div class="question-guide">
+                    {% block banner_title %}
+                    <h2>
+                        <span class="hidden-xs">{% trans "How can we help you on" %} {{ app.name }} <img width="40" src="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}"> ?</span>
+                        <span class="visible-xs">{% trans "FAQ" %} {{ app.name }} <img width="40" src="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}"> ?</span>
+                    </h2>
+                    {% endblock %}
+                </div>
+                <div id="faq-search">
+                    <div class="container-fluid ">
+                        <label class="sr-only" for="question">question search</label>
+                        <input type="text" value="" placeholder="{% trans "Describe your question" %}" name="q" size="40" autofocus class="form-control" autocomplete="off">
+                    </div>
+                </div>
+                <div class="browsing-guide" >
+                    <h4>{% trans "You can also browse the questions to find what you are looking for" %}</h4>
+                </div>
+            </form>
+        </div>
+    </div>
     {% block body-page %}
         <div class="container-fluid" id="core-general-faq">
             <div class="row" style="padding: 0 0 125px;">
-                <div class="panel-group" id="accordion" style="margin-bottom: 0;">
+                <div id="accordion" class="panel-group col-sm-10 col-sm-offset-1 col-md-8 col-md-offset-2 col-lg-6 col-lg-offset-3" style="padding: 0">
                     {% for topic in topic_list %}
-                      <div class="panel panel-default accordion-card mb-lg-auto mb-5 col-sm-6 col-sm-offset-3">
+                      <div class="panel panel-default accordion-card mb-lg-auto mb-5">
                         <div class="panel-heading accordion-header">
-                          <h4 class="mb-0 headding-style panel-title">
                             <a class="topic-name" data-toggle="collapse" data-parent="#accordion" href="#collapse{{ forloop.counter }}">
-                                {{ topic.title }}
-                                <i class="fas fa-angle-right rotate-icon italic-style" aria-hidden="true"></i>
+                                <h4 class="mb-0 headding-style panel-title">
+                                    <i class="fas fa-angle-right rotate-icon italic-style" aria-hidden="true"></i>
+                                    <strong>{{ topic.title }}</strong>
+                                </h4>
+                                <div class="text-muted summary">
+                                    {% if topic.summary %}
+                                        {{ topic.summary|safe }}
+                                    {% endif %}
+                                </div>
                             </a>
-                          </h4>
                         </div>
                         <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse accordion-body w3-z">
                           <div class="panel-body panel-question">
                               <ul class="list-unstyled nav nav-pills nav-stacked" >
-                                {% for question in topic.question_set.all %}
+                                {% for question in topic.question_list %}
                                     <li>
-                                        <span>
-                                            <a href="{% url 'faq:question_detail' app.slug question.topic.slug question.slug %}" class="question-of-topic">
-                                                {% if request|is_mobile %}
-                                                    {{ question.label|truncatechars:22 }}
-                                                {% else %}
-                                                    {% if request|is_tablet %}
-                                                        {{ question.label|truncatechars:52 }}
-                                                    {% elif request|is_pc %}
-                                                        {{ question.label|truncatechars:74 }}
-                                                    {% endif %}
-                                                {% endif %}
-                                            </a>
-                                        </span>
+                                        <a href="{% url 'faq:question_detail' app.slug question.topic.slug question.slug %}">
+                                            {{ question.label }}
+                                        </a>
                                     </li>
                                 {% endfor%}
                               </ul>
@@ -98,15 +86,13 @@
                         </div>
                       </div>
                     {% endfor %}
-                    <div class="mb-lg-auto mb-5 col-sm-6 col-sm-offset-3">
+                    <div>
                         <a href="{% url 'home' %}" class="go-home">
                             {% trans 'Go back home' %}
                         </a>
                     </div>
                 </div>
-
             </div>
-
         </div>
     {% endblock %}
 <!-- Card -->
@@ -115,7 +101,7 @@
  <footer class="footer">
      <div class="container">
          <div class="row footer-core" >
-             <div class="col-sm-4 col-xs-4 footer-mobile-adjust">
+             <div class="col-sm-4">
                  <h5 class="h5-footer-core">{% trans "Get started" %}</h5>
                  <ul class="footer-links-group">
                      <li><a class="footer-links" href="http://www.ikwen.com">{% trans "Home" %}</a></li>
@@ -136,14 +122,14 @@
                      </li>
                  </ul>
              </div>
-             <div class="col-sm-4 col-xs-4 footer-mobile-adjust">
+             <div class="col-sm-4">
                  <h5 class="h5-footer-core">{% trans "About us" %}</h5>
                  <ul class="footer-links-group">
                      <li><a class="footer-links" href="http://www.ikwen.com/about" target="_blank">{% trans "Our Company" %}</a></li>
                      <li><a class="footer-links" href="#" target="_blank">{% trans "Reviews" %}</a></li>
                  </ul>
              </div>
-             <div class="col-sm-4 col-xs-4 footer-mobile-adjust">
+             <div class="col-sm-4">
                  <h5 class="h5-footer-core">{% trans "Support" %}</h5>
                  <ul class="footer-links-group">
                      <li><a class="footer-links" href="{% url 'home' %}" target="_blank">{% trans "FAQ" %}</a></li>
@@ -161,17 +147,10 @@
 
 {% endblock %}
 
-
-<div class="edge-swipe-overlay"></div>
-
-
 {% block js %}
     {{ block.super }}
-
     <script type="text/javascript" src="{% static 'ikwen/js/jquery.autocomplete.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'ikwen/js/jquery-1.12.4.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'ikwen/js/jquery-ui.js' %}"></script>
-    {% block js-core %}
     <script>
         $(function () {
             $('body').find('.navbar-default .navbar-brand').css({'margin-left': '0!important',
@@ -258,65 +237,34 @@
                    }
                 });
             });
-        })
-    </script>
-    {% endblock %}
-    {% block accordion %}
-        <script type="text/javascript">
-            $(function () {
-              var selector = $("a.topic-name"),
+            var selector = $("a.topic-name"),
                 categories = $.makeArray(selector), previous_click_index = -1, previous_click = null, clickIndex = -1,
                 angle_icon = $("i.fas");
-                $(this).find(selector).click(function () {
-                    var current_click_index = $.inArray(this, categories),
-                        current_click = $(this);
-                    clickIndex ++;
-                    if ( current_click_index !==-1 ){
-                        if ( previous_click_index !== current_click_index ) {
-                            if (clickIndex) {
-                                previous_click.parents(".accordion-card").removeClass("card-bgd");
-                                previous_click.parents(".accordion-header").removeClass("card-header-bgd");
-                                previous_click.find(angle_icon).removeClass("fa-angle-down").addClass("fa-angle-right");
-                            }
-                        }
-                        current_click.parents(".accordion-card").toggleClass("card-bgd");
-                        current_click.parents(".accordion-header").toggleClass("card-header-bgd");
-                        if ( current_click.hasClass("fa-angle-down") ) {
-                            current_click.find(angle_icon).toggleClass("fa-angle-right fa-angle-down");
-                        } else {
-                            current_click.find(angle_icon).toggleClass("fa-angle-down fa-angle-right");
+            $(this).find(selector).click(function () {
+                var current_click_index = $.inArray(this, categories),
+                    current_click = $(this);
+                clickIndex ++;
+                if ( current_click_index !==-1 ){
+                    if ( previous_click_index !== current_click_index ) {
+                        if (clickIndex) {
+                            previous_click.parents(".accordion-card").removeClass("card-bgd");
+                            previous_click.parents(".accordion-header").removeClass("card-header-bgd");
+                            previous_click.find(angle_icon).removeClass("fa-angle-down").addClass("fa-angle-right");
                         }
                     }
-                    previous_click_index = current_click_index ;
-                    previous_click = current_click;
-                });
-                $(".panel-question li").on({
-                    click:function () {
-                        $(this).addClass('card-body-bgd');
-                        $(this).find('a').addClass('card-child-bgd');
-                        },
-                    mouseenter:function () {
-                        $(this).addClass('card-body-bgd');
-                        $(this).find('a').addClass('card-child-bgd');
-                        },
-                    mouseout:function () {
-                        $(this).removeClass('card-body-bgd');
-                        $(this).find('a').removeClass('card-child-bgd');
-                        },
-                    mouseleave:function () {
-                        $(this).removeClass('card-body-bgd');
-                        $(this).find('a').removeClass('card-child-bgd');
-                        },
-                    mouseover:function () {
-                        $(this).addClass('card-body-bgd');
-                        $(this).find('a').addClass('card-child-bgd');
+                    current_click.parents(".accordion-card").toggleClass("card-bgd");
+                    current_click.parents(".accordion-header").toggleClass("card-header-bgd");
+                    if ( current_click.hasClass("fa-angle-down") ) {
+                        current_click.find(angle_icon).toggleClass("fa-angle-right fa-angle-down");
+                    } else {
+                        current_click.find(angle_icon).toggleClass("fa-angle-down fa-angle-right");
                     }
-                });
-            })
-        </script>
-    {% endblock %}
-    {% block customjs-pagecode %}{% endblock %}
-
+                }
+                previous_click_index = current_click_index ;
+                previous_click = current_click;
+            });
+        })
+    </script>
 {% endblock %}
 
 

@@ -1,2 +1,29 @@
 {% extends "core/base_admin.html" %}
-{% load i18n humanize staticfiles auth_tokens %}
+
+{% load i18n static humanize staticfiles user_agents auth_tokens cache %}
+{% block admin_nav %}
+    <div id="admin-nav" class="edge-panel-left">
+        <div class="wrapper">
+            <div class="stage">
+                <div class="menu">
+                    {% if perms.accesscontrol.sudo %}
+                        <ul class="nav nav-pills nav-stacked">
+                            <li role="presentation" class="homepage">
+                            <li role="presentation" class="questions">
+                                <a href="{% url 'faq:question_list' %}" >
+                                    {% trans "Questions" %}
+                                </a>
+                            </li>
+                            <li role="presentation" class="topics">
+                                <a href="{% url 'faq:topic_list' %}">
+                                    {% trans "Topics" %}
+                                </a>
+                            </li>
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,7 +1,13 @@
 {% extends 'faq/show_topic_list.html' %}
-{% load i18n staticfiles auth_tokens static user_agents %}
+{% load i18n static user_agents webdesign %}
 {% block page_title %}
     <title> ikwen FAQ </title>
+{% endblock %}
+
+{% block banner_title %}
+<h2>
+    <span class="hidden-xs">{% trans "How can we help you ?" %}</span>
+</h2>
 {% endblock %}
 
 
@@ -19,44 +25,27 @@
                     <a class="img-link" href="{% url 'faq:show_topic_list' app.slug %}">
                         <h4>
                             <img class="picture-features" src="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}">
-                                {{ app.name }}
+                            <span>{{ app.name }}</span>
                         </h4>
                     </a>
                     <div>
-                        <p class="paragraph">
-                            <ol class="ordered-list-style">
-                                {% for question in app.question_list %}
-                                    {% if forloop.counter <= 5 %}
-                                        <li>
-                                            <a class="question" href="{% url 'faq:question_detail' app.slug question.topic.slug question.slug %}">
-                                            {% if request|is_mobile %}
-                                                {{ question.label|truncatechars:30 }}
-                                            {% else %}
-                                                {% if request|is_tablet %}
-                                                    {{ question.label|truncatechars:50 }}
-                                                {% elif request|is_pc %}
-                                                    {{ question.label|truncatechars:65 }}
-                                                {% endif %}
-                                            {% endif %}
-                                            </a>
-                                        </li>
-                                    {% endif %}
-                                {% endfor %}
-                                <li><a href="{% url 'faq:show_topic_list' app.slug %}" class="parent-link-full-display"><span class="link-full-display">{% trans 'View all questions' %}</span></a></li>
-                            </ol>
-                        </p>
+                        <ol>
+                            {% for question in app.question_list %}
+                                {% if forloop.counter <= 5 %}
+                                    <li>
+                                        <a href="{% url 'faq:question_detail' app.slug question.topic.slug question.slug %}">
+                                            {{ question.label }}
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+                            <li><a href="{% url 'faq:show_topic_list' app.slug %}" class="parent-link-full-display"><span class="link-full-display">{% trans 'View all questions' %}</span></a></li>
+                        </ol>
                     </div>
                 </div>
             {% endfor %}
         </div>
     </div>
 </div>
-
-{% endblock %}
-
-
-<div class="edge-swipe-overlay"></div>
-{% block accordion %}{% endblock %}
-{% block customjs-pagecode %}
 
 {% endblock %}

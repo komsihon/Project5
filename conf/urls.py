@@ -17,8 +17,6 @@ urlpatterns = patterns(
     url(r'^revival/', include('ikwen.revival.urls', namespace='revival')),
     url(r'^laakam/', include(admin.site.urls)),
 
-    url(r'^$', Home.as_view(), name='home'),
-    url(r'^', include('faq.urls', namespace='faq')),
 
     url(r'^get_media$', get_media, name='get_media'),
     url(r'^delete_photo$', delete_photo, name='delete_photo'),
@@ -27,6 +25,7 @@ urlpatterns = patterns(
     url(r'^yommax/$', AdminHome.as_view(), name='admin_home'),
     url(r'^submit_review$', submit_review, name='submit_review'),
     url(r'^page/(?P<url>[-\w]+)/$', FlatPageView.as_view(), name='flatpage'),
-    url(r'^(?P<application_slug>[-\w]+)/$', TopicList.as_view(), name='topic_list'),
-    url(r'^(?P<application_slug>[-\w]+)/(?P<topic_slug>[-\w]+)$', TopicDetail.as_view(), name='topic_detail'),
+
+    url(r'^$', Home.as_view(), name='home'),
+    url(r'^', include('faq.urls', namespace='faq')),
 )

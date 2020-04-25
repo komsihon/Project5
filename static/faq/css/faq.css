@@ -36,7 +36,7 @@ html {
 }
 
 
-.question{
+ #faq-search input {
     height: 6vh;
     -webkit-border-radius: 20px;
     -moz-border-radius: 20px;
@@ -62,14 +62,24 @@ html {
     background-color: #fff!important;
     z-index:3;
     height:inherit;
-    margin:23px auto 23px 23px;
     color: #3175b9!important;
+    padding: 0;
+}
+
+.accordion-header>a {
+    padding: 30px 15px 30px 38px;
+    display: block;
+   text-decoration: none!important;
+}
+
+.accordion-header>a .summary {
+    margin: 10px 0 0 0;
+    font-size: .9em;
 }
 
 .accordion-body{
-    background-color: #e9eff7;
+    background-color: #f6faff;
     color: black;
-
 }
 
 .footer-core {
@@ -87,6 +97,19 @@ a[class="collapsed"] {
     /*margin: 38px!important;*/
 }
 
+.panel-question a {
+    padding: 0!important;
+    background-color: transparent;
+}
+
+.panel-heading .panel-title {
+    margin-left: -20px;
+}
+
+.panel-heading .summary {
+    height: 36px;
+    overflow: hidden;
+}
 
 .ui-autocomplete {
     overflow: auto!important;
@@ -221,6 +244,7 @@ li.ui-menu-item > a {
 
 .button-feedback:visited,.return-faq-home:visited, .button-feedback:visited,.button-feedback:active, .return-faq-home:active {
     text-decoration:none;
+    /* text-align: center; */
 }
 
 .picture-features {
@@ -232,14 +256,20 @@ li.ui-menu-item > a {
     vertical-align:center;
     /*margin-right:160px;*/
 }
-.ordered-list-style {
+.app-card ol {
     list-style-type:none;
     list-style-position:outside;
     padding-left: 0!important;
     margin-right: 30px;
 }
-.ordered-list-style > li {
+
+.app-card ol li {
     margin-bottom:12px;
+    overflow: hidden;
+}
+
+.app-card ol li a {
+    white-space: nowrap;
 }
 .button-feedback,.return-faq-home {
     border-style:solid;
@@ -248,9 +278,11 @@ li.ui-menu-item > a {
 .button-feedback {
     border-radius: 20px;
     padding:10px 15px;
-    /*float:right;*/
-    /*margin-top:-10px;*/
-    /*margin-left:5px;*/
+}
+
+
+.faq-home-button {
+    margin-top: 50px;
 }
 
 .mark-helpful {
@@ -264,7 +296,6 @@ li.ui-menu-item > a {
 .return-faq-home {
     border-radius: 40px;
     padding:15px;
-    /*margin:0 auto;*/
     text-align:center;
 }
 
@@ -285,6 +316,7 @@ li.ui-menu-item > a {
 
 .topic-answer > p {
     margin:30px auto 20px;
+    line-height: 28px;
 }
 
 #parent-core-home-faq{
@@ -339,28 +371,36 @@ li.ui-menu-item > a {
     background: #233682;
 }
 .panel-question {
-    padding:0px!important;
+    padding:0 !important;
 }
-.panel-question li {
-/*    padding: 15px!important;*/
-    padding: 8px 58px;
+
+.panel-question li {padding: 15px 44px;}
+
+.panel-question a {
+    background-color: transparent!important;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 
 .card-bgd {
-    background-color:  #07cfd5 !important;;
+    background-color: #2196f3 !important;
+    border: none;
 }
 .card-header-bgd {
     background-color: inherit!important;
-    color: #fff!important;
+    color: #fff;
+    font-size: .9em;
 }
-.card-body-bgd {
+
+.card-header-bgd * {
+    color: #fff;
+}
+
+.panel-question li:hover {
     background-color: rgba(23, 184, 214, 0.1) !important;
 }
 
-.card-child-bgd {
-    color: #61c8fa !important;
-}
 
 .question-link {
     /*color: #fff3cd !important;*/
@@ -372,11 +412,15 @@ li.ui-menu-item > a {
 .collapsed-links-col {
     color:#fff;
 }
-#input > div {
+#faq-search > div {
     display: block;
     margin: auto;
     width: 80%;
 
+}
+
+.next-tutorial {
+    text-align: right;
 }
 
 .feedback {
@@ -386,15 +430,18 @@ li.ui-menu-item > a {
 
 
 .feedback-action {
-    float:right;
+    float: right;
     display: inline-block;
+    text-align: center;
     margin-top:-14px;
 }
 
+.feedback-action a {
+    width: 95px;
+}
 
 .header-opinion {
-    float:right;
-    border: solid 0.25vh #313131;
+    text-align: right;
 }
 
 .go-home {
@@ -425,16 +472,12 @@ li.ui-menu-item > a {
 @media only screen and (max-device-width: 425px) {
     .header-opinion {
         float: none;
-        border: solid 0.25vh #313131;
         margin: 15px;
+        text-align: center;
     }
 }
 
 @media only screen and (max-device-width: 767px) {
-    .question-guide {
-        visibility: hidden;
-        height: 0px;
-    }
     .browsing-guide {
         visibility: hidden;
         height: 20px;
@@ -444,7 +487,7 @@ li.ui-menu-item > a {
         padding-top:11vh;
     }
 
-    #input {
+    #faq-search {
         padding:10px;
     }
 
@@ -461,7 +504,7 @@ li.ui-menu-item > a {
         margin-bottom:-2.3%;
     }
     .faq-home-button {
-        margin: 3vh  auto;
+        margin: 7vh auto 3vh;
     }
     #question{
     height: 5.5vh;
@@ -476,8 +519,13 @@ li.ui-menu-item > a {
         -webkit-border-radius: 3px;
         -moz-border-radius: 3px;
         border-radius: 3px;
+        margin-top: 50px;
     }
-    #input > div {
+
+    .next-tutorial {
+        text-align: center;
+    }
+    #faq-search > div {
         display: block;
         margin: auto;
         width: 100%;
@@ -493,6 +541,9 @@ li.ui-menu-item > a {
         overflow: hidden!important;
     }
 
+    .panel-heading .summary {
+        height: 76px;
+    }
 }
 
 
@@ -614,7 +665,7 @@ li.ui-menu-item > a {
 
 @media only screen and (min-device-width: 768px){
 
-    #input {
+    #faq-search {
         margin: 3.5%;
     }
 

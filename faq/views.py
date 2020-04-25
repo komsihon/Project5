@@ -39,18 +39,14 @@ class Home(TemplateView):
         language = get_language()
         context = super(Home, self).get_context_data(**kwargs)
         app_list = []
-        # add_database(UMBRELLA)
-        # for app in Application.objects.using(UMBRELLA).all().order_by('name'):
-        # for app in get_object_or_404(Application).objects.order_by('name').all():
         for app in Application.objects.all().order_by('name'):
             topic_list = list(Topic.objects.filter(app=app, language=language))
-            question_list = Question.objects.filter(topic__in=topic_list, language=language)
+            question_list = Question.objects.filter(topic__in=topic_list, language=language, appear_on_home=True).order_by('order_of_appearance')
             if question_list.count() > 0:
                 app.question_list = question_list
                 app_list.append(app)
 
         context['app_list'] = app_list
-
         return context
 
 
@@ -62,11 +58,9 @@ class QuestionDetail(TemplateView):
         app_slug = kwargs['app_slug']
         topic_slug = kwargs['topic_slug']
         question_slug = kwargs['question_slug']
+        app = get_object_or_404(Application, slug=app_slug)
         topic = get_object_or_404(Topic, slug=topic_slug)
         question = get_object_or_404(Question, slug=question_slug)
-
-        # add_database(UMBRELLA)
-        app = get_object_or_404(Application, slug=app_slug)
         current_language = get_language()
         prev_lang = ''
         if question.language != current_language:
@@ -83,6 +77,18 @@ class QuestionDetail(TemplateView):
         context['app'] = app
         context['topic'] = topic
         context['question'] = question
+        next_question = None
+        try:
+            next_question = Question.objects.filter(order_of_appearance__gt=question.order_of_appearance, topic=topic, language=question.language)\
+                .order_by('order_of_appearance')[0]
+        except:
+            try:
+                next_topic = Topic.objects.filter(app=app, order_of_appearance__gt=topic.order_of_appearance, language=question.language)\
+                    .order_by('order_of_appearance')[0]
+                next_question = Question.objects.filter(topic=next_topic, language=question.language).order_by('order_of_appearance')[0]
+            except:
+                pass
+        context['next_question'] = next_question
 
         return context
 
@@ -104,7 +110,7 @@ class QuestionDetail(TemplateView):
 
 class ShowTopicList(TemplateView):
     """
-    written by: Silatchom SIAKA (AI responsible)
+
     """
     template_name = 'faq/show_topic_list.html'
 
@@ -114,9 +120,9 @@ class ShowTopicList(TemplateView):
         language = get_language()
         topic_list = []
         app = get_object_or_404(Application, slug=app_slug)
-        for topic in Topic.objects.filter(language=language, app=app).order_by('title'):
+        for topic in Topic.objects.filter(language=language, app=app).order_by('order_of_appearance'):
             question_list = []
-            for question in Question.objects.filter(topic=topic, language=language):
+            for question in Question.objects.filter(topic=topic, language=language).order_by('order_of_appearance'):
                 question_list.append(question)
             topic.question_list = question_list
             topic_list.append(topic)
@@ -128,7 +134,7 @@ class ShowTopicList(TemplateView):
 class ShowQuestionList(TemplateView):
     """
     """
-    template_name = 'faq/question_list.html'
+    template_name = 'faq/show_question_list.html'
 
     def get_context_data(self, **kwargs):
         language = get_language()
@@ -207,9 +213,33 @@ class TopicList(HybridListView):
     Here is the admin topic list view.
     """
     model = Topic
-    ordering = ('title',)
+    ordering = ('order_of_appearance', 'title',)
     search_field = 'title'
     list_filter = ('language', 'app',)
+
+
+class ApplicationListFilter():
+    title = _('application')
+    parameter_name = 'application'
+
+    def lookups(self):
+        """
+        :param request:
+        :param model_admin:
+        :return:
+        """
+        result = []
+        for q in Application.objects.all():
+            result.append((q.id, q.name))
+        return result
+
+    def queryset(self, request, queryset):
+        value = request.GET.get(self.parameter_name)
+        if not value:
+            return queryset
+        app = Application.objects.get(pk=value)
+        topic_list = list(Topic.objects.filter(app=app))
+        return queryset.filter(topic__in=topic_list)
 
 
 class QuestionList(HybridListView):
@@ -217,8 +247,9 @@ class QuestionList(HybridListView):
     Here is the admin question list view.
     """
     model = Question
+    ordering = ('order_of_appearance',)
     search_field = 'label'
-    list_filter = ('label', 'language', 'topic', 'user_views', 'count_helpful', 'count_helpless')
+    list_filter = (ApplicationListFilter, 'language', 'topic')
 
 
 class ChangeTopic(ChangeObjectBase):
@@ -231,5 +262,6 @@ class ChangeQuestion(ChangeObjectBase):
     model = Question
     model_admin = QuestionAdmin
     label_field = 'label'
+    template_name = 'faq/change_question.html'
 
 

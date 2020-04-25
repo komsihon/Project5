@@ -1,27 +1,54 @@
 from django.contrib import admin
 # from faq.models import Topic, Category, Question, Topic1, Question1
+from django.shortcuts import get_object_or_404
+
 from faq.models import Topic, Question
 from ikwen.core.models import Application
 from ikwen.core.admin import ApplicationAdmin
+from django.utils.translation import gettext as _
 
 
 class TopicAdmin(admin.ModelAdmin):
-    # prepopulated_fields = {"slug": ("title",)}
-    fields = ('title', 'app', 'language', 'base_lang_version')
+    list_filter = ('app', 'language')
+    fields = ('title', 'app', 'language', 'base_lang_version', 'order_of_appearance', 'summary')
     list_display = ('title', 'app', 'language', 'base_lang_version')
 
 
+class ApplicationListFilter(admin.SimpleListFilter):
+    title = _('application')
+    parameter_name = 'application'
+
+    def lookups(self, request, model_admin):
+        """
+        :param request:
+        :param model_admin:
+        :return:
+        """
+        result = []
+        for q in Application.objects.all():
+            result.append((q.id, q.name))
+        return result
+
+    def queryset(self, request, queryset):
+        if self.value():
+            app = Application.objects.get(pk=self.value())
+            topic_list = list(Topic.objects.filter(app=app))
+            return queryset.filter(topic__in=topic_list)
+
+
 class QuestionAdmin(admin.ModelAdmin):
-    # prepopulated_fields = {"slug": ("label",)}
-    fields = ('label', 'tags', 'topic', 'user_views',
-              'count_helpful', 'count_helpless', 'language', 'base_lang_version')
+    list_filter = (ApplicationListFilter, 'topic', 'language')
+    fields = ('label', 'tags', 'topic', 'user_views', 'answer',
+              'count_helpful', 'count_helpless', 'language', 'base_lang_version', 'appear_on_home', 'order_of_appearance', 'summary')
     list_display = ('label', 'tags', 'topic', 'user_views',
-                    'count_helpful', 'count_helpless', 'author', 'language', 'base_lang_version')
+                    'count_helpful', 'count_helpless', 'language', 'base_lang_version')
+
+    # def formfield_for_dbfield(self, db_field, request, **kwargs):
+    #     if db_field.name == "topic":
+    #         kwargs["queryset"] = get_object_or_404(Topic, pk=kwargs.get('object_id'))
+    #         return super(QuestionAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 admin.site.register(Topic, TopicAdmin)
 admin.site.register(Question, QuestionAdmin)
-# admin.site.register(Topic1, Topic1Admin)
-# admin.site.register(Question1, Question1Admin)
-# admin.site.register(Application, ApplicationAdmin)
 
