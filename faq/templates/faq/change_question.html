@@ -15,7 +15,7 @@
         .qq-upload-button {background:#00aac9; border: 1px solid #37B7CC;border-radius: 2px; color: #fff; float: left; clear: both; height: 36px;}
         .images-uploader .qq-upload-button {line-height: 35px}
         .qq-upload-button:not(.qq-upload-button-hover){color: #eee}
-        .qq-upload-success, .qq-upload-drop-area {display: none}
+        .qq-upload-success, .qq-upload-drop-area {display: none!important;}
         .qq-uploader {height: 0; padding-top: 0}
         #upload-container {float: left; clear: both}
         #image-cntr {float: left; clear: both}
@@ -103,7 +103,6 @@
                 $tpl.find('.image').attr('src', media);
                 return $tpl
             }
-
             var uploader = new qq.FileUploader({
                 action: "{% url 'upload_image' %}",
                 element: $('div#tiny-mce-uploader')[0],
