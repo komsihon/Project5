@@ -1,0 +1,9 @@
+{% load i18n static user_agents webdesign %}
+<meta name="abstract" content="{% blocktrans with name=app.name %}{{ name }} FAQ | ikwen Apps Support{% endblocktrans %}" />
+<meta property="og:url" content="{{ service.url }}/{{ app.slug }}" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="{% blocktrans with name=app.name %} Common questions with {{ name }} | {{ name }} Support {% endblocktrans %}" />
+<meta property="og:image" content="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}" />
+<meta property="og:description" content="{% trans 'Zero-asset online trade' %}" />
+<meta name="description" content="{% trans 'Kakocase lets you create an e-commerce website in a few clicks. Your website accepts Mobile Money payments right out of the box. PayPal is also supported to handle payments with Credit/Debit cards. With our integrated Facebook communication module, launch your marketing campaign and drive thousands of visitors and buyers to your website' %}" />
+<meta property="og:site_name" content="ikwen.com/{{ app.name }}" />

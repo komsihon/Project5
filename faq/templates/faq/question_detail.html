@@ -1,18 +1,16 @@
-{% extends 'faq/show_topic_list.html' %}
-{% load i18n staticfiles auth_tokens static humanize %}
+{% extends 'faq/home_faq.html' %}
+{% load i18n staticfiles auth_tokens static humanize media_from_provider %}
 
 {% block meta %}
-    <meta name="msapplication-TileColor" content="#ffffff">
-    <meta name="msapplication-TileImage" content="http://assets.ikwen.com/ikwen/favicons/ms-icon-144x144.png">
-    <meta name="abstract" content="{{ service.project_name }} - {{ config.slogan }}" />
-    <meta name="description" content="{{ config.short_description }}" />
-    <meta property="og:title" content="{{ service.project_name }}" />
-    <meta property="og:image" content="{% static 'faq/img/ikwen-logo.png' %}" />
-    <meta property="og:description" content="{{ config.short_description }}" />
-    <meta property="og:url" content="{{ service.url }}" />
-    <meta property="og:site_name" content="{{ service.domain|upper }}" />
-    <link rel="icon" type="image/jpg" href="{% static 'faq/img/ikwen_kernel_logo.png' %}">
-
+    {% include 'core/snippets/color_and_icons.html' %}
+    <meta name="abstract" content="{{ app.name }} FAQ | ikwen Apps Support" />
+    <meta property="og:url" content="{{ service.url }}/{{ app.slug }}/{{ topic.slug }}/{{ question.slug }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="{{ question.label }} | {{ app.name }} Support" />
+    <meta property="og:image" content="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}" />
+    <meta property="og:description" content="{{ app.description }}" />
+    <meta name="description" content="{{ app.description }}" />
+    <meta property="og:site_name" content="ikwen.com/{{ app.name }}" />
 {% endblock %}
 
 {% block page_title %}
@@ -38,7 +36,7 @@
 
                     </div>
 
-                    <div style="display: block">
+                    <div class="row" style="display: block">
                         <div class=" col-lg-9" style="margin: 2vh auto auto;float: none!important;">
                             {% block response_core %}
                                 <div>
@@ -104,15 +102,10 @@
 
             let endpoint = "{% url 'faq:save_user_feedback' %}",
                 count_helpful = 0 , count_helpless = 0;
-            {##}
-            {#$('form#lang-selector').submit(function () {#}
-            {#        let address = "{% url 'faq:question_detail' topic.app.slug topic.slug question.slug %}";#}
-            {#   $(this).append("<a hidden='hidden' href=" + address + "></a>");#}
-            {#});#}
 
             $(".mark-helpful").click(function () {
                 count_helpful = 1;
-                var params = {
+                let params = {
                     format: 'json',
                     q: '{{ question.slug }}',
                     count_helpful: count_helpful,
@@ -136,7 +129,7 @@
             });
             $(".mark-helpless").click(function () {
                 count_helpless =1;
-                var params = {
+                let params = {
                     format: 'json',
                     q: '{{ question.slug }}',
                     count_helpful: count_helpful,
@@ -153,18 +146,18 @@
 
                 });
             });
-            var params = {
+            let params = {
                 format: 'json',
                 q:'{{ question.slug }}',
                 user_views: 1
             };
             $.getJSON(endpoint, params, function(data, status, jqXHR){
                 // handle callback here
-                    if (data.error) {
-                        console.log("Bad response\n");
-                    } else if (data.success) {
-                        console.log("This topic has been read\n");
-                    }
+                if (data.error) {
+                    console.log("Bad response\n");
+                } else if (data.success) {
+                    console.log("This topic has been read\n");
+                }
             });
         })
     </script>

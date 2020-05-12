@@ -1,8 +1,22 @@
 {% extends 'faq/question_detail.html' %}
-{% load i18n staticfiles auth_tokens static %}
+{% load i18n staticfiles auth_tokens static media_from_provider %}
+
+{% block meta %}
+    {% include 'core/snippets/color_and_icons.html' %}
+    <meta name="abstract" content="{{ app.name }} FAQ | ikwen Apps Support" />
+    <meta property="og:url" content="{{ service.url }}/{{ app.slug }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Suggested questions and topics from your request" />
+    <meta property="og:image" content="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}" />
+    <meta property="og:description" content="A lead, a guide, a pilot of ikwen cloud services" />
+    <meta name="description" content="{{ app.description }}" />
+    <meta property="og:site_name" content="ikwen.com/{{ app.name }}" />
+{% endblock %}
+
 {% block page_title %}
     <title> ikwen FAQ</title>
 {% endblock %}
+
 {% block head_style %}
     {{ block.super }}
     <style>
@@ -22,11 +36,18 @@
                 {% for topic in topic_list %}
                     <li><h4 style="margin-top:30px"><a href="{% url 'faq:show_topic_list' topic.app.slug %}" style="text-decoration: none;color:#233682;">
                         {% for word in topic.title.split %}
-                            {% if q|lower in word|lower %}
+                            {% if word|lower in tag_list %}
                                 <strong style="color: #000;">
                                     {{ word }}
                                 </strong>
                             {% else %}
+{#                                {% for tag in tag_list %}#}
+{#                                    {% if tag in word %}#}
+{#                                        <strong style="color: #000;">#}
+{#                                            {{ word }}#}
+{#                                        </strong>#}
+{#                                    {% endif %}#}
+{#                                {% endfor %}#}
                                 {{ word }}
                             {% endif %}
                         {% endfor %}
@@ -37,7 +58,7 @@
                 {% for question in question_list_1 %}
                     <li style=""><h4 style="margin-top:30px"><a href="{% url 'faq:question_detail' question.topic.app.slug question.topic.slug question.slug %}" style="text-decoration: none;color:#233682;">
                     {% for word in question.label.split %}
-                        {% if q|lower in word|lower %}
+                        {% if word|lower in tag_list %}
                             <strong style="color: #000;">
                                 {{ word }}
                             </strong>
@@ -52,7 +73,7 @@
                 {% for question in question_list_2 %}
                     <li ><h4 style="margin-top:30px"><a style="text-decoration:none;color:#233682;" href="{% url 'faq:question_detail' question.topic.app.slug question.topic.slug question.slug %}">
                         {% for word in question.label.split %}
-                            {% if q|lower in word|lower %}
+                            {% if word|lower in tag_list %}
                                 <strong style="color: #000;">{{ word }}</strong>
                             {% else %}
                                 {{ word }}
@@ -62,7 +83,7 @@
                     <li style=""><h5><a style="text-decoration: none;color:rgba(61,61,61,0.91)" href="{% url 'faq:question_detail' question.topic.app.slug question.topic.slug question.slug %}">
                     {% for sentence in question.sentence_with_keyword|safe %}
                         {% for word in sentence.split %}
-                            {% if q|lower in word|lower %}
+                            {% if word|lower in tag_list %}
                                 <strong style="color: #000;">
                                     {{ word }}
                                 </strong>
@@ -73,10 +94,11 @@
                     {% endfor %}
                     </a></h5></li>
                 {% endfor %}
-            {% elif question_list_1|length == 0 and question_list_2|length == 0 and topic_list|length == 0 %}
+            {% endif %}
+{#            {% if question_list_1|length == 0 and question_list_2|length == 0 and topic_list|length == 0 %}#}
+            {% if question_list_1|length == 0 and topic_list|length == 0 %}
                 <h4 style="color: rgba(18,18,18,0.98);">{% trans "No result found" %}</h4>{% trans "Please check your spelling or try another term." %}
             {% endif %}
-
         </ul>
     </div>
     <div>

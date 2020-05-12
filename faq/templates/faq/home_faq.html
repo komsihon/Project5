@@ -1,51 +1,235 @@
-{% extends 'faq/show_topic_list.html' %}
-{% load i18n static user_agents webdesign %}
+{% extends 'core/base_bs.html' %}
+{% load i18n static user_agents webdesign media_from_provider %}
+
+{% block meta %}
+    {{ block.super }}
+    <meta name="abstract" content="FAQ, full documentation and known issues of the hole IKWEN cloud services | IKWEN Support" />
+    <meta property="og:url" content="{{ service.url }}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Ikwen FAQ" />
+    <meta property="og:image" content="{% with app_logo_name='ikwen' %}{{ settings.IKWEN_MEDIA_URL }}{{ app_logo_name }}{% endwith %}" />
+    <meta property="og:description" content="Full documentation, frequently asked questions, known issues that guide you thorough the use of ikwen services" />
+    <meta name="description" content="Full documentation, frequently asked questions, known issues that guide you thorough the use of ikwen services" />
+    <meta property="og:site_name" content="ikwen.com" />
+{% endblock %}
+
+{% block head_style %}
+    {{ block.super }}
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="{% static 'faq/css/faq.css' %}?v=27.04.20.02.49">
+{% endblock %}
+
 {% block page_title %}
     <title> ikwen FAQ </title>
 {% endblock %}
 
-{% block banner_title %}
-<h2>
-    <span class="hidden-xs">{% trans "How can we help you ?" %}</span>
-</h2>
+{% block content %}
+    {% block seo %}{% endblock %}
+    <div class="query-section">
+        <div class="container question-search3 form-group" >
+            <form role="form" class="horizontal-form" action="{% url 'faq:show_question_list' %}"  name="formQuestion" id="form-question">
+                <div class="question-guide">
+                    {% block banner_title %}
+                        <h2>
+                            <span class="hidden-xs">{% trans "How can we help you ?" %}</span>
+                        </h2>
+                    {% endblock %}
+                </div>
+                <div id="faq-search">
+                    <div class="container-fluid ">
+                        <label class="sr-only" for="question">question search</label>
+                        <input type="text" value="" placeholder="{% trans "Describe your question" %}" name="q" size="40" autofocus class="form-control" autocomplete="off">
+                    </div>
+                </div>
+                <div class="browsing-guide" >
+                    <h4>{% trans "You can also browse the questions to find what you are looking for" %}</h4>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% block body-page %}
+        <div id="parent-core-home-faq">
+            <div class="container" id="core-home-faq">
+                <div class="row custom_row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 section-features-text">
+                        <h2 class="mobile-adjust">{% trans "Frequently Asked Questions" %}</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    {% for app in app_list %}
+                        <div class="col-md-6 app-card">
+                            <a class="img-link" href="{% url 'faq:show_topic_list' app.slug %}">
+                                <h4>
+                                    <img class="picture-features" src="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}">
+                                    <span>{{ app.name }}</span>
+                                </h4>
+                            </a>
+                            <div>
+                                <ol>
+                                    {% for question in app.question_list %}
+                                        {% if forloop.counter <= 5 %}
+                                            <li>
+                                                <a href="{% url 'faq:question_detail' app.slug question.topic.slug question.slug %}">
+                                                    {{ question.label }}
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <li><a href="{% url 'faq:show_topic_list' app.slug %}" class="parent-link-full-display"><span class="link-full-display">{% trans 'View all questions' %}</span></a></li>
+                                </ol>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+<!-- Card -->
+{% endblock %}
+
+{% block footer %}
+ <footer class="footer">
+     <div class="container">
+         <div class="row footer-core" >
+             <div class="col-sm-4">
+                 <h5 class="h5-footer-core">{% trans "Get started" %}</h5>
+                 <ul class="footer-links-group">
+                     <li><a class="footer-links" href="http://www.ikwen.com">{% trans "Home" %}</a></li>
+                     <li><a class="footer-links" href="http://www.ikwen.com/signIn" target="_blank">{% trans "Sign In" %}</a></li>
+                     <li>
+                         <form action="{% url 'set_language' %}" method="post" id="lang-selector">{% csrf_token %}
+                             {% get_available_languages as LANGUAGES %}
+                             {% get_current_language as LANGUAGE_CODE %}
+                                 <label for="language" class="sr-only">Language:</label>
+                                 <select class="lang-switcher" style="background: #233682; border-color: #fff; color:#fff" name="language" onfocus="$(this).children('option').css({'background-color':'#ffffff','color':'#1d3321'})" onchange="$(this).parents('form').submit()">
+                                     {% for lang in LANGUAGES %}
+                                        <option onblur="$(this).parent().blur()" value="{{ lang.0 }}"{% if lang.0 == LANGUAGE_CODE %} selected  {% endif %}>
+                                            <span>{{ lang.0|upper }}</span>
+                                        </option>
+                                     {% endfor %}
+                                 </select>
+                         </form>
+                     </li>
+                 </ul>
+             </div>
+             <div class="col-sm-4">
+                 <h5 class="h5-footer-core">{% trans "About us" %}</h5>
+                 <ul class="footer-links-group">
+                     <li><a class="footer-links" href="http://www.ikwen.com/about" target="_blank">{% trans "Our Company" %}</a></li>
+                     <li><a class="footer-links" href="#" target="_blank">{% trans "Reviews" %}</a></li>
+                 </ul>
+             </div>
+             <div class="col-sm-4">
+                 <h5 class="h5-footer-core">{% trans "Support" %}</h5>
+                 <ul class="footer-links-group">
+                     <li><a class="footer-links" href="{% url 'home' %}" target="_blank">{% trans "FAQ" %}</a></li>
+                     <li><a class="footer-links" href="http://blog.ikwen.com/" target="_blank">{% trans "Blog" %}</a></li>
+                     <li><a class="footer-links" href="http://support.ikwen.com/" target="_blank">{% trans "Help desk" %}</a></li>
+                 </ul>
+             </div>
+
+         </div>
+     </div>
+     <div class="footer-copyright mobile-adjust ">
+         © 2020 <a class="company-name" href="http://www.ikwen.com"><strong class="copy-right-name">ikwen</strong></a>
+     </div>
+ </footer>
+
 {% endblock %}
 
 
-{% block body-page %}
-<div id="parent-core-home-faq">
-    <div class="container" id="core-home-faq">
-        <div class="row custom_row">
-            <div class="col-lg-12 col-md-12 col-sm-12 section-features-text">
-                <h2 class="mobile-adjust">{% trans "Frequently Asked Questions" %}</h2>
-            </div>
-        </div>
-        <div class="row">
-            {% for app in app_list %}
-                <div class="col-md-6 app-card">
-                    <a class="img-link" href="{% url 'faq:show_topic_list' app.slug %}">
-                        <h4>
-                            <img class="picture-features" src="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}">
-                            <span>{{ app.name }}</span>
-                        </h4>
-                    </a>
-                    <div>
-                        <ol>
-                            {% for question in app.question_list %}
-                                {% if forloop.counter <= 5 %}
-                                    <li>
-                                        <a href="{% url 'faq:question_detail' app.slug question.topic.slug question.slug %}">
-                                            {{ question.label }}
-                                        </a>
-                                    </li>
-                                {% endif %}
-                            {% endfor %}
-                            <li><a href="{% url 'faq:show_topic_list' app.slug %}" class="parent-link-full-display"><span class="link-full-display">{% trans 'View all questions' %}</span></a></li>
-                        </ol>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static 'ikwen/js/jquery.autocomplete.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'ikwen/js/jquery-ui.js' %}"></script>
+    <script>
+        $(function () {
+            $('body').find('.navbar-default .navbar-brand').css({'margin-left': '0!important',
+                'max-width': '125px!important',
+                'overflow': 'hidden!important;'});
 
+            $("[style*='Ubuntu']").css({'font-family': '"Lato","Helvetica Neue",Helvetica,Arial,sans-serif'});
+
+            $("#question").change(function () {
+                var q = $(this).val(),
+                    autocomplete_infos,
+                    endpoint = "{% url 'faq:autocomplete_user_research' %}",
+                    params = {
+                    format: 'json',
+                    q:q
+                } , items = [];
+
+                $.getJSON(endpoint,params,function (data,status,jqXHR) {
+                   if (data.success) {
+                       autocomplete_infos = data.data;
+                       var question_list_with_keyword_in_label = new Object(autocomplete_infos['question_list_with_keyword_in_label']),
+                           question_list_with_keyword_in_answer = new Object(autocomplete_infos['question_list_with_keyword_in_answer']),
+                           topic_list = new Object(autocomplete_infos['topic_list']),
+                           topic, sentence, question;
+
+                       for (topic in topic_list ) {
+                           var item1 = {};
+                           item1.value =  topic_list[topic]['title'];
+                           item1.label = topic_list[topic]['title'];
+                           item1.content = "";
+                           item1.object = this;
+                           items.push(item1);
+
+                       }
+                       $.each(question_list_with_keyword_in_answer, function (ind,question) {
+                           var item2 = {};
+                           item2.value = question["label"];
+                           item2.label =  item2.value;
+                           item2.content = function () {
+                               var sentence_list = question["sentence_with_keyword"],
+                                   paragraph = "";
+                               $.each(sentence_list,function (ind,sentence) {
+                                   paragraph += sentence;
+                               });
+                               return paragraph;
+                           }();
+                           item2.object = this;
+                           items.push(item2);
+
+                       });
+                       $.each(question_list_with_keyword_in_label, function (ind,question) {
+                           var item3 = {};
+                          item3.value = question["label"];
+                          item3.label =  item3.value;
+                          item3.content = "";
+                          item3.object = this;
+                          items.push(item3);
+
+                       });
+                   } else {
+                       if ( data.error ){
+                           console.log("No message received.");
+                       }
+                   }
+                });
+                console.log(items);
+                $(this).autocomplete({
+                   source: items,
+                   html: true,
+                   delay: 100,
+                   minLength: 4,
+                   scroll: true,
+                   disabled: false,
+                   open: function (event) {
+                        var $div = $(this).autocomplete("widget");
+                        $div.css({"width":$(this).width()+30,"z-index":"10","margin-top":"10px"});
+                   },
+                   create: function () {
+                       $(this).data( "ui-autocomplete" )._renderItem = function(ul, item) {
+                           return $("<li>")
+                               .data( "item.autocomplete", item )
+                               .attr("data-value", item.value)
+                               .append( "<a>"+ item.label + "<br>"+item.content+"</a>" )
+                               .appendTo( ul );
+                       };
+                   }
+                });
+            });
+        })
+    </script>
 {% endblock %}

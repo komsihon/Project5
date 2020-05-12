@@ -11,11 +11,15 @@
         #image-list .media-ctnr img {border-radius: 10px;max-height: 160px; width: 100%}
         #image-list .media-ctnr .delete-media {cursor: pointer; font-size: 14px;float: left;padding: 2px 0; text-align: center; width: 100%}
         #image-list .media-ctnr .delete-media:hover {color: #7a1e31}
-        .qq-upload-button {background:#00aac9; border: 1px solid #37B7CC;border-radius: 2px; color: #fff; padding: 15px 25px; float: left; clear: both; margin-top: 20px;}
-        .qq-upload-success {display: none}
+        {#.qq-upload-button {background:#00aac9; border: 1px solid #37B7CC;border-radius: 2px; color: #fff; padding: 15px 25px; float: left; clear: both; margin-top: 20px;}#}
+        .qq-upload-button {background:#00aac9; border: 1px solid #37B7CC;border-radius: 2px; color: #fff; float: left; clear: both; height: 36px;}
+        .images-uploader .qq-upload-button {line-height: 35px}
+        .qq-upload-button:not(.qq-upload-button-hover){color: #eee}
+        .qq-upload-success, .qq-upload-drop-area {display: none}
+        .qq-uploader {height: 0; padding-top: 0}
         #upload-container {float: left; clear: both}
         #image-cntr {float: left; clear: both}
-        .loading {background: url("{% static 'faq/img/hand-spinner-gif-1.gif' %}");background-size: 41% auto;background-color: #ffffffa1;background-position: center; background-repeat: no-repeat; display: none; height: 374px;margin: -12px;position: absolute;width: 1068px}
+        .loading {background: url("{% static 'faq/img/hand-spinner-gif-1.gif' %}"); transition: background 8s; background-size: 41% auto;background-color: #ffffffa1;background-position: center; background-repeat: no-repeat; display: none; height: 374px;margin: -12px;position: absolute;width: 1068px}
     </style>
 {% endblock %}
 
@@ -29,11 +33,7 @@
                 <span class="delete-media">Delete</span>
             </div>
         </div>
-        <div id="tiny-mce-uploader col-sm-4 col-sm-offset-3" class="images-uploader" style="margin: 30px auto; display: inline-block">
-            <button class="btn btn-block btn-primary">
-                {% trans "Upload image" %}
-            </button>
-        </div>
+        <div id="tiny-mce-uploader" class="images-uploader btn btn-primary col-sm-4 col-sm-offset-3" style="margin-top: 30px; padding: 0"></div>
     </section>
 {% endblock %}
 
@@ -104,7 +104,6 @@
                 return $tpl
             }
 
-            $('.qq-upload-drop-area').remove();
             var uploader = new qq.FileUploader({
                 action: "{% url 'upload_image' %}",
                 element: $('div#tiny-mce-uploader')[0],

@@ -1,0 +1,9 @@
+{% load i18n static user_agents webdesign %}
+<meta name="abstract" content="{% blocktrans with name=app.name %}{{ name }} FAQ | ikwen Apps Support{% endblocktrans %}" />
+<meta property="og:url" content="{{ service.url }}/{{ app.slug }}" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="{% blocktrans with name=app.name %} Common questions with {{ name }} | {{ name }} Support {% endblocktrans %}" />
+<meta property="og:image" content="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}" />
+<meta property="og:description" content="{% trans "Create or improve your online presence to enhance your visibility and add to your credibility" %}" />
+<meta name="description" content="{% trans 'Provide you with world-class communication tools that meet international standards tailored to your needs in just 5 minutes' %}" />
+<meta property="og:site_name" content="ikwen.com/{{ app.name }}" />

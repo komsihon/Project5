@@ -4,6 +4,7 @@ import re
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect
+from django.utils.text import slugify
 from django.utils.translation import get_language, gettext as _
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
@@ -128,6 +129,7 @@ class ShowTopicList(TemplateView):
             topic_list.append(topic)
         context['topic_list'] = topic_list
         context['app'] = app
+        context['meta_snippet'] = 'faq/snippets/meta_%s.html' % app.slug
         return context
 
 
@@ -140,15 +142,24 @@ class ShowQuestionList(TemplateView):
         language = get_language()
         context = super(ShowQuestionList, self).get_context_data()
         q = self.request.GET["q"]
+        context['q'] = q
+        q = slugify(unicode(q))
         tag_list = []
 
-        for word in q.split(' '):
-            tag_list.append(word[:4])
+        for word in q.split('-'):
+            tag_list.append(str(word[:4]))
 
-        tag_list.sort()
-        tags = ' '.join(tag_list)
-        topic_list = list(Topic.objects.filter(title__icontains=tags, language=language))
-        question_list_1 = list(Question.objects.filter(label__icontains=tags, language=language))
+        # tags = ' '.join(tag_list)
+        topic_list = []
+        question_list_1 = []
+        for tag in tag_list:
+            for question in Question.objects.filter(tags__icontains=tag, language=language):
+                if question not in question_list_1:
+                    question_list_1.append(question)
+            for topic in Topic.objects.filter(title__icontains=tag, language=language):
+                if topic not in topic_list:
+                    topic_list.append(topic)
+
 
         # question_list_2 = []
         # for question in Question.objects.filter(language=language):
@@ -162,7 +173,7 @@ class ShowQuestionList(TemplateView):
         context['question_list_1'] = question_list_1
         # context['question_list_2'] = question_list_2
         context['topic_list'] = topic_list
-        context['q'] = q
+        context['tag_list'] = tag_list
         return context
 
 

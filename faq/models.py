@@ -1,22 +1,24 @@
 from django.conf import settings
 from django.db import models
+from django.template.defaultfilters import slugify
+from django.utils.translation import gettext_lazy as _
 from ikwen.accesscontrol.backends import UMBRELLA
+
 from ikwen.core.models import Application, Model
 from ikwen.accesscontrol.models import Member
-from django.template.defaultfilters import slugify
 
 
 class Topic(Model):
     """
     Topic field which replaces category model in the previous modeling
     """
-    title = models.CharField(max_length=100, null=True, blank=True)  # type: unicode
+    title = models.CharField(max_length=100, null=True, blank=True, verbose_name=_('Title'))  # type: unicode
     slug = models.SlugField(max_length=250, null=True, blank=True)
-    app = models.ForeignKey(Application, null=True, blank=True)
-    language = models.CharField(max_length=2, choices=getattr(settings, "LANGUAGES"), null=True, blank=True)
-    base_lang_version = models.ForeignKey('self', null=True, blank=True)
-    order_of_appearance = models.IntegerField(default=0)
-    summary = models.TextField(blank=True, null=True)
+    app = models.ForeignKey(Application, null=True, blank=True, verbose_name=_('Application'))
+    language = models.CharField(max_length=2, choices=getattr(settings, "LANGUAGES"), null=True, blank=True, verbose_name=_('Language'))
+    base_lang_version = models.ForeignKey('self', null=True, blank=True, verbose_name=_('Base language version'))
+    order_of_appearance = models.IntegerField(default=0, verbose_name=_('Order of appearance'))
+    summary = models.TextField(blank=True, null=True, verbose_name=_('Summy'))
 
     class Meta:
         unique_together = (
@@ -38,20 +40,20 @@ class Question(Model):
     Question field which replaces Topic model in the previous modeling
     """
     admin = Member.objects.get(username__icontains='siaka')
-    label = models.CharField(max_length=250, null=True, blank=True)
+    label = models.CharField(max_length=250, null=True, blank=True, verbose_name=_('Label'))
     slug = models.SlugField(max_length=240)
-    tags = models.CharField(max_length=250, null=True, blank=True)
-    answer = models.TextField(blank=True)
-    topic = models.ForeignKey(Topic, null=True, blank=True)
-    user_views = models.IntegerField(default=0)
-    count_helpful = models.IntegerField(default=0)
-    count_helpless = models.IntegerField(default=0)
-    author = models.ForeignKey(Member, null=True, editable=False,  default=admin.id)
-    language = models.CharField(max_length=2, choices=getattr(settings, "LANGUAGES"), null=True, blank=True)
-    base_lang_version = models.ForeignKey('self', null=True, blank=True)
-    order_of_appearance = models.IntegerField(default=0)
-    appear_on_home = models.BooleanField(default=False)
-    summary = models.TextField(blank=True, null=True)
+    tags = models.CharField(max_length=250, null=True, blank=True, verbose_name=_('Tags'))
+    answer = models.TextField(blank=True, verbose_name=_('Answer'))
+    topic = models.ForeignKey(Topic, null=True, blank=True, verbose_name=_('Topic'))
+    user_views = models.IntegerField(default=0, verbose_name=_('User views'))
+    count_helpful = models.IntegerField(default=0, verbose_name=_('Count helpful'))
+    count_helpless = models.IntegerField(default=0, verbose_name=_('Count helpless'))
+    author = models.ForeignKey(Member, null=True, editable=False,  default=admin.id, verbose_name=_('Author'))
+    language = models.CharField(max_length=2, choices=getattr(settings, "LANGUAGES"), null=True, blank=True, verbose_name=_('Language'))
+    base_lang_version = models.ForeignKey('self', null=True, blank=True, verbose_name=_('Base language version'))
+    order_of_appearance = models.IntegerField(default=0, verbose_name=_('Order of appearance'))
+    appear_on_home = models.BooleanField(default=False, verbose_name=_('Appear on home'))
+    summary = models.TextField(blank=True, null=True, verbose_name=_('Summary'))
 
     class Meta:
         unique_together = (

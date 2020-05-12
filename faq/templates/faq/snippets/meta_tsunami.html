@@ -1,0 +1,9 @@
+{% load i18n static user_agents webdesign %}
+<meta name="abstract" content="{% blocktrans with name=app.name %}{{ name }} FAQ | ikwen Apps Support{% endblocktrans %}" />
+<meta property="og:url" content="{{ service.url }}/{{ app.slug }}" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="{% blocktrans with name=app.name %} Common questions with {{ name }} | {{ name }} Support {% endblocktrans %}" />
+<meta property="og:image" content="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}" />
+    <meta property="og:description" content="{% trans 'Reach more customers and sell all your stocks with Tsunami' %}" />
+<meta name="description" content="{% trans 'Tsunami builds for you a persistent customer base and offers your products to this community via continuous automated Mail and SMS reminders.You should consider increasing your available stocks....' %}" />
+<meta property="og:site_name" content="ikwen.com/{{ app.name }}" />

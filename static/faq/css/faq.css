@@ -64,6 +64,7 @@ html {
     height:inherit;
     color: #3175b9!important;
     padding: 0;
+    height: 124px;
 }
 
 .accordion-header>a {
@@ -497,15 +498,27 @@ li.ui-menu-item > a {
     .accordion-card {
         padding:1vh 0;
     }
-    .italic-style {
-        padding-right: 7px;
+
+    .accordion-header {
+        height: 138px;
     }
+
+    .accordion-header>a {
+        padding: 12px 10px 23px 33px;
+    }
+
     .accordion-body {
         margin-bottom:-2.3%;
     }
+
+    .italic-style {
+        padding-right: 7px;
+    }
+
     .faq-home-button {
         margin: 7vh auto 3vh;
     }
+
     #question{
     height: 5.5vh;
     -webkit-border-radius: 20px;
@@ -513,6 +526,7 @@ li.ui-menu-item > a {
     border-radius: 20px;
     border:0;
     }
+
     #opinion {
         color:#757575;
         padding: 10px;

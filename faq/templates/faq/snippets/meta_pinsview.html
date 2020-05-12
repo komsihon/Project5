@@ -1,0 +1,9 @@
+{% load i18n static user_agents webdesign %}
+<meta name="abstract" content="{% blocktrans with name=app.name %}{{ name }} FAQ | ikwen Apps Support{% endblocktrans %}" />
+<meta property="og:url" content="{{ service.url }}/{{ app.slug }}" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="{% blocktrans with name=app.name %} Common questions with {{ name }} | {{ name }} Support {% endblocktrans %}" />
+<meta property="og:image" content="{{ settings.IKWEN_MEDIA_URL }}{{ app.logo.name }}" />
+<meta property="og:description" content="{% trans "Geographic visualization for effective business" %}" />
+<meta name="description" content="{% trans 'PinsView lets you follow your assets on the field in real-time. Your agents pinpoint and describe your interests when they are out for a campaign or intervention. The history module lets you set events on elements on your map. Gone are the days where you were wondering what is going on out' %}" />
+<meta property="og:site_name" content="ikwen.com/{{ app.name }}" />
