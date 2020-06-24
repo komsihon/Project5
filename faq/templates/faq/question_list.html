@@ -1,0 +1,31 @@
+{% extends "core/object_list_base.html" %}
+{% load i18n humanize staticfiles admin_list %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript">
+        (function() {
+            $('#application, #language').change((e) => {
+                $('#topic').html(`<option value="">All ${e.target.value} topics</option>`);
+                let appId = $('#application').val(),
+                    lang = $('#language').val();
+
+                $.getJSON('', {'action': 'narrow_topics', 'app_id': appId, 'lang': lang}, (data) => {
+                    let options = '';
+                    for (let i=0; i<data.length; i++) {
+                        options += `<option value="${data[i].id}">${data[i].title}</option>`;
+                    }
+                    $('#topic').html(options);
+                });
+            });
+            $('#admin-tools-actions a').click((e) => {
+                let appId = $('#application').val(),
+                    lang = $('#language').val(),
+                    topicId = $('#topic').val(),
+                    href = $('#admin-tools-actions a').attr('href');
+                window.location = href + '?app_id=' + appId + '&lang=' + lang + '&topic_id=' + topicId;
+                return false;
+            });
+        })()
+    </script>
+{% endblock %}

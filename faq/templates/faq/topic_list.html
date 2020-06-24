@@ -1,0 +1,17 @@
+{% extends "core/object_list_base.html" %}
+{% load i18n humanize staticfiles admin_list %}
+
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript">
+        (function() {
+            $('#admin-tools-actions a').click((e) => {
+                let appId = $('#app').val(),
+                    lang = $('#language').val(),
+                    href = $('#admin-tools-actions a').attr('href');
+                window.location = href + '?app_id=' + appId + '&lang=' + lang;
+                return false;
+            });
+        })()
+    </script>
+{% endblock %}

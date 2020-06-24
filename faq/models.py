@@ -18,7 +18,7 @@ class Topic(Model):
     language = models.CharField(max_length=2, choices=getattr(settings, "LANGUAGES"), null=True, blank=True, verbose_name=_('Language'))
     base_lang_version = models.ForeignKey('self', null=True, blank=True, verbose_name=_('Base language version'))
     order_of_appearance = models.IntegerField(default=0, verbose_name=_('Order of appearance'))
-    summary = models.TextField(blank=True, null=True, verbose_name=_('Summy'))
+    summary = models.TextField(blank=True, null=True, verbose_name=_('Summary'))
 
     class Meta:
         unique_together = (
@@ -70,7 +70,10 @@ class Question(Model):
         tag_list = [tag[:4] for tag in self.slug.split('-')]
         tag_list.sort()
         self.tags = ' '.join(tag_list)
-
+        if self.base_lang_version:
+            self.topic.default = self.base_lang_version
+        else:
+            self.topic.default = Topic.objects.filter(title__icontains=self.label).first()
         super(Question, self).save()
 
 

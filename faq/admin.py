@@ -38,15 +38,10 @@ class ApplicationListFilter(admin.SimpleListFilter):
 
 class QuestionAdmin(admin.ModelAdmin):
     list_filter = (ApplicationListFilter, 'topic', 'language')
-    fields = ('label', 'tags', 'topic', 'user_views', 'answer',
-              'count_helpful', 'count_helpless', 'language', 'base_lang_version', 'appear_on_home', 'order_of_appearance', 'summary')
+    fields = ('label', 'topic', 'answer',
+              'language', 'base_lang_version', 'appear_on_home', 'order_of_appearance', 'summary')
     list_display = ('label', 'tags', 'topic', 'user_views',
                     'count_helpful', 'count_helpless', 'language', 'base_lang_version')
-
-    # def formfield_for_dbfield(self, db_field, request, **kwargs):
-    #     if db_field.name == "topic":
-    #         kwargs["queryset"] = get_object_or_404(Topic, pk=kwargs.get('object_id'))
-    #         return super(QuestionAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
 admin.site.register(Topic, TopicAdmin)

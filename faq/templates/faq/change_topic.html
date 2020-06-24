@@ -1,0 +1,25 @@
+{% extends 'core/change_object_base.html' %}
+{% load i18n static admin_static staticfiles %}
+
+
+{% block js %}
+    {{ block.super }}
+    <script>
+        (() => {
+            let appId = "{{ request.GET.app_id }}";
+            $('#id_app').val(appId).prop('disabled', true).change(listBaseVersion);
+            $('#id_language').val("{{ request.GET.lang }}").prop('disabled', true);
+            listBaseVersion();
+
+            function listBaseVersion() {
+                $.getJSON('', {'action': 'list_base_versions', 'app_id': appId}, (data) => {
+                    let options = '';
+                    for (let i = 0; i < data.length; i++) {
+                        options += `<option value="${data[i].id}">${data[i].title}</option>`;
+                    }
+                    $('#id_base_lang_version').html(options);
+                });
+            }
+        })()
+    </script>
+{% endblock %}

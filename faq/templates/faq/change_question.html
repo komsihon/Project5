@@ -66,7 +66,6 @@
                 properties['width'] = 740
             }
 
-            {#$('#image-cntr').insertAfter('.admin-form section');#}
             tinymce.init(properties);
             $('textarea').addClass('dropper');
 
@@ -148,6 +147,24 @@
                     });
                 }
             });
+        })()
+    </script>
+    <script>
+        (() => {
+            let topicId = "{{ request.GET.topic_id }}";
+            $('#id_topic').val(topicId).prop('disabled', true).change(listBaseVersion);
+            $('#id_language').val("{{ request.GET.lang }}").prop('disabled', true);
+            listBaseVersion();
+
+            function listBaseVersion() {
+                $.getJSON('', {'action': 'list_base_versions', 'topic_id': topicId}, (data) => {
+                    let options = '';
+                    for (let i = 0; i < data.length; i++) {
+                        options += `<option value="${data[i].id}">${data[i].label}</option>`;
+                    }
+                    $('#id_base_lang_version').html(options);
+                });
+            }
         })()
     </script>
 {% endblock %}

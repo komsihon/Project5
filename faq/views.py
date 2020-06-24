@@ -226,7 +226,7 @@ class TopicList(HybridListView):
     model = Topic
     ordering = ('order_of_appearance', 'title',)
     search_field = 'title'
-    list_filter = ('language', 'app',)
+    list_filter = ('app', 'language',)
 
 
 class ApplicationListFilter():
@@ -262,11 +262,37 @@ class QuestionList(HybridListView):
     search_field = 'label'
     list_filter = (ApplicationListFilter, 'language', 'topic')
 
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('action') == 'narrow_topics':
+            lang = request.GET['lang']
+            app_id = request.GET['app_id']
+            return self.narrow_topics(app_id, lang)
+        return super(QuestionList, self).get(request, *args, **kwargs)
+
+    def narrow_topics(self, app_id, lang):
+        qs = Topic.objects
+        if app_id:
+            qs = qs.filter(app=app_id)
+        if lang:
+            qs = qs.filter(language=lang)
+        topic_list = [topic.to_dict() for topic in qs]
+        return HttpResponse(json.dumps(topic_list))
+
 
 class ChangeTopic(ChangeObjectBase):
     model = Topic
     model_admin = TopicAdmin
     label_field = 'title'
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('action') == 'list_base_versions':
+            app_id = request.GET['app_id']
+            return self.list_base_versions(app_id)
+        return super(ChangeTopic, self).get(request, *args, **kwargs)
+
+    def list_base_versions(self, app_id):
+        topic_list = [topic.to_dict() for topic in Topic.objects.filter(app=app_id, language='en')]
+        return HttpResponse(json.dumps(topic_list))
 
 
 class ChangeQuestion(ChangeObjectBase):
@@ -274,5 +300,16 @@ class ChangeQuestion(ChangeObjectBase):
     model_admin = QuestionAdmin
     label_field = 'label'
     template_name = 'faq/change_question.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('action') == 'list_base_versions':
+            topic_id = request.GET['topic_id']
+            return self.list_base_versions(topic_id)
+        return super(ChangeQuestion, self).get(request, *args, **kwargs)
+
+    def list_base_versions(self, topic_id):
+        question_list = [question.to_dict() for question in Question.objects.filter(topic=topic_id, language='en')]
+        return HttpResponse(json.dumps(question_list))
+
 
 
