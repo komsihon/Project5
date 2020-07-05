@@ -152,10 +152,12 @@
     <script>
         (() => {
             let topicId = "{{ request.GET.topic_id }}", lang = "{{ request.GET.lang }}",
-                $topicId = $('#id_topic').val(topicId), $lang = $('#id_language');
+                $topicId = $('#id_topic').val(topicId), $lang = $('#id_language').val(lang);
 
-            if (topicId !== '')  $topicId.prop('disabled', true).change(listBaseVersion);
-            if (lang !== '') $lang.val().prop('disabled', true);
+            if (topicId !== '' || lang !== '') {
+                $topicId.prop('disabled', true).change(listBaseVersion);
+                $lang.prop('disabled', true);
+            }
             listBaseVersion();
 
             function listBaseVersion() {
