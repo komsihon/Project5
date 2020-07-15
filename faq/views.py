@@ -9,14 +9,17 @@ from django.utils.translation import get_language, gettext as _
 from django.views.generic import TemplateView
 from django.shortcuts import get_object_or_404
 
+from ikwen.accesscontrol.backends import UMBRELLA
 from ikwen.core.views import HybridListView, ChangeObjectBase
 from ikwen.core.utils import to_dict
+from ikwen.core.models import Application
 
 from faq.admin import TopicAdmin, QuestionAdmin
-from faq.models import Application, Topic, Question
+from faq.models import Topic, Question
+
 
 reload(sys)
-sys.setdefaultencoding('utf-8') # Allow system to decode utf-8's strings such as ',",|,?
+sys.setdefaultencoding('utf-8')  # Allow system to decode utf-8's strings such as ',",|,?
 
 
 def create_sentence_with_keyword(paragraph, keyword_word):
@@ -40,7 +43,7 @@ class Home(TemplateView):
         language = get_language()
         context = super(Home, self).get_context_data(**kwargs)
         app_list = []
-        for app in Application.objects.all().order_by('name'):
+        for app in Application.objects.using(UMBRELLA).all().order_by('name'):
             topic_list = list(Topic.objects.filter(app=app, language=language))
             question_list = Question.objects.filter(topic__in=topic_list, language=language, appear_on_home=True).order_by('order_of_appearance')
             if question_list.count() > 0:
@@ -240,7 +243,7 @@ class ApplicationListFilter():
         :return:
         """
         result = []
-        for q in Application.objects.all():
+        for q in Application.objects.using(UMBRELLA).all():
             result.append((q.id, q.name))
         return result
 
@@ -248,7 +251,7 @@ class ApplicationListFilter():
         value = request.GET.get(self.parameter_name)
         if not value:
             return queryset
-        app = Application.objects.get(pk=value)
+        app = Application.objects.using(UMBRELLA).get(pk=value)
         topic_list = list(Topic.objects.filter(app=app))
         return queryset.filter(topic__in=topic_list)
 
