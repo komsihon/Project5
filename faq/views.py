@@ -43,7 +43,7 @@ class Home(TemplateView):
         language = get_language()
         context = super(Home, self).get_context_data(**kwargs)
         app_list = []
-        for app in Application.objects.using(UMBRELLA).all().order_by('name'):
+        for app in Application.objects.all().order_by('name'):
             topic_list = list(Topic.objects.filter(app=app, language=language))
             question_list = Question.objects.filter(topic__in=topic_list, language=language, appear_on_home=True).order_by('order_of_appearance')
             if question_list.count() > 0:
@@ -222,16 +222,6 @@ def autocomplete_user_research(request, *args, **kwargs):
     return HttpResponse(json.dumps({'success': True, 'data': response}), 'content-type:text/json')
 
 
-class TopicList(HybridListView):
-    """
-    Here is the admin topic list view.
-    """
-    model = Topic
-    ordering = ('order_of_appearance', 'title',)
-    search_field = 'title'
-    list_filter = ('app', 'language',)
-
-
 class ApplicationListFilter():
     title = _('application')
     parameter_name = 'application'
@@ -243,7 +233,7 @@ class ApplicationListFilter():
         :return:
         """
         result = []
-        for q in Application.objects.using(UMBRELLA).all():
+        for q in Application.objects.all():
             result.append((q.id, q.name))
         return result
 
@@ -251,9 +241,19 @@ class ApplicationListFilter():
         value = request.GET.get(self.parameter_name)
         if not value:
             return queryset
-        app = Application.objects.using(UMBRELLA).get(pk=value)
+        app = Application.objects.get(pk=value)
         topic_list = list(Topic.objects.filter(app=app))
         return queryset.filter(topic__in=topic_list)
+
+
+class TopicList(HybridListView):
+    """
+    Here is the admin topic list view.
+    """
+    model = Topic
+    ordering = ('order_of_appearance', 'title',)
+    search_field = 'title'
+    list_filter = ('app', 'language',)
 
 
 class QuestionList(HybridListView):

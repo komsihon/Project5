@@ -151,24 +151,27 @@
     </script>
     <script>
         (() => {
-            let topicId = "{{ request.GET.topic_id }}", lang = "{{ request.GET.lang }}",
+            {% if not obj %}
+                let topicId = "{{ request.GET.topic_id }}", lang = "{{ request.GET.lang }}",
                 $topicId = $('#id_topic').val(topicId), $lang = $('#id_language').val(lang);
 
-            if (topicId !== '' || lang !== '') {
-                $topicId.prop('disabled', true).change(listBaseVersion);
-                $lang.prop('disabled', true);
-            }
-            listBaseVersion();
+                if (topicId !== '' || lang !== '') {
+                    $topicId.prop('disabled', true).change(listBaseVersion);
+                    $lang.prop('disabled', true);
+                }
+                listBaseVersion();
 
-            function listBaseVersion() {
-                $.getJSON('', {'action': 'list_base_versions', 'topic_id': topicId}, (data) => {
-                    let options = '';
-                    for (let i = 0; i < data.length; i++) {
-                        options += `<option value="${data[i].id}">${data[i].label}</option>`;
-                    }
-                    $('#id_base_lang_version').html(options);
-                });
-            }
+                function listBaseVersion() {
+                    $.getJSON('', {'action': 'list_base_versions', 'topic_id': topicId}, (data) => {
+                        let options = '';
+                        for (let i = 0; i < data.length; i++) {
+                            options += `<option value="${data[i].id}">${data[i].label}</option>`;
+                        }
+                        $('#id_base_lang_version').html(options);
+                    });
+                }
+            {% endif %}
+
         })()
     </script>
 {% endblock %}
