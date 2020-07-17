@@ -161,6 +161,10 @@
                 }
                 listBaseVersion();
 
+                $('form.admin-form').submit(() => {
+                   $topicId.prop('disabled', false);
+                   $lang.prop('disabled', false);
+                });
                 function listBaseVersion() {
                     $.getJSON('', {'action': 'list_base_versions', 'topic_id': topicId}, (data) => {
                         let options = '';

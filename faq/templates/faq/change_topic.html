@@ -7,10 +7,18 @@
     <script>
         (() => {
             {% if not obj %}
-                let appId = "{{ request.GET.app_id }}";
-                $('#id_app').val(appId).prop('disabled', true).change(listBaseVersion);
-                $('#id_language').val("{{ request.GET.lang }}").prop('disabled', true);
+                let appId = "{{ request.GET.app_id }}",
+                $app = $('#id_app'),
+                $lang = $('#id_language');
+
+                $app.val(appId).prop('disabled', true).change(listBaseVersion);
+                $lang.val("{{ request.GET.lang }}").prop('disabled', true);
                 listBaseVersion();
+
+                $('form.admin-form').submit(() => {
+                   $app.prop('disabled', false);
+                   $lang.prop('disabled', false);
+                });
 
                 function listBaseVersion() {
                     $.getJSON('', {'action': 'list_base_versions', 'app_id': appId}, (data) => {
