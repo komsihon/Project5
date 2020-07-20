@@ -44,7 +44,7 @@ class Question(Model):
     slug = models.SlugField(max_length=240)
     tags = models.CharField(max_length=250, null=True, blank=True, verbose_name=_('Tags'))
     answer = models.TextField(blank=True, verbose_name=_('Answer'))
-    topic = models.ForeignKey(Topic, null=True, blank=True, verbose_name=_('Topic'))
+    topic = models.ForeignKey(Topic, null=True, verbose_name=_('Topic'))
     user_views = models.IntegerField(default=0, verbose_name=_('User views'))
     count_helpful = models.IntegerField(default=0, verbose_name=_('Count helpful'))
     count_helpless = models.IntegerField(default=0, verbose_name=_('Count helpless'))
@@ -70,10 +70,6 @@ class Question(Model):
         tag_list = [tag[:4] for tag in self.slug.split('-')]
         tag_list.sort()
         self.tags = ' '.join(tag_list)
-        if self.base_lang_version:
-            self.topic.default = self.base_lang_version
-        else:
-            self.topic.default = Topic.objects.filter(title__icontains=self.label).first()
         super(Question, self).save()
 
 

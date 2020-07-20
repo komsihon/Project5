@@ -181,10 +181,9 @@ class ShowQuestionList(TemplateView):
 
 
 def save_user_feedback(request, *args, **kwargs):
-    language = get_language()
     q = request.GET
     question = q.get('q')
-    matched_question = Question.objects.get(language=language, slug=question)
+    matched_question = Question.objects.get(slug=question)
     count_helpful = q.get('count_helpful')
     count_helpless = q.get('count_helpless')
     user_views = q.get('user_views')
