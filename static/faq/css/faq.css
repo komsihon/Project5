@@ -613,11 +613,6 @@ li.ui-menu-item > a {
 	button.mobile-adjust { margin-top: 2vh !important;}
 
 	div.mobile-adjust{ padding-top: 8vh !important; }
-
-    .topic-body img {
-        display: none;
-    }
-
 }
 
 /* Landscape optimisation */
