@@ -22,7 +22,7 @@
 
                 function listBaseVersion() {
                     $.getJSON('', {'action': 'list_base_versions', 'app_id': appId}, (data) => {
-                        let options = '';
+                        let options = `<option value selected="selected">---------</option>`;
                         for (let i = 0; i < data.length; i++) {
                             options += `<option value="${data[i].id}">${data[i].title}</option>`;
                         }
